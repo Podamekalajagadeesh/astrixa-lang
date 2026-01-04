@@ -1,0 +1,1 @@
+/workspaces/astrixa-lang/compiler/target/debug/astrixa: /workspaces/astrixa-lang/compiler/src/ast.rs /workspaces/astrixa-lang/compiler/src/interpreter.rs /workspaces/astrixa-lang/compiler/src/lexer.rs /workspaces/astrixa-lang/compiler/src/main.rs /workspaces/astrixa-lang/compiler/src/parser.rs

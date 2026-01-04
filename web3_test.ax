@@ -1,0 +1,7 @@
+fn main() {
+    print(chain.id)
+    print(chain.name)
+    print(msg.sender)
+    print(msg.value)
+    print(tx.timestamp)
+}

@@ -1,0 +1,34 @@
+contract Wallet {
+    let owner
+    let balance
+
+    fn init() {
+        owner = msg.sender
+        balance = 0
+    }
+
+    fn deposit(amount) {
+        if amount < 0 {
+            panic("Amount must be positive")
+        }
+        balance = balance + amount
+    }
+
+    fn withdraw(amount) {
+        if msg.sender != owner {
+            panic("Not owner")
+        }
+        if amount > balance {
+            panic("Insufficient balance")
+        }
+        balance = balance - amount
+    }
+
+    fn getBalance() {
+        return balance
+    }
+}
+
+fn main() {
+    print("Smart contracts are now native to Astrixa!")
+}

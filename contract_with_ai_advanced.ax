@@ -1,0 +1,184 @@
+// Advanced AI + Smart Contract Example
+// Content moderation system using sentiment analysis
+
+contract ContentModerator {
+    state: [
+        "total_moderated",
+        "toxic_count",
+        "positive_count",
+        "neutral_count",
+        "last_moderation_score",
+        "moderation_threshold"
+    ]
+
+    fn initialize() {
+        state["total_moderated"] = 0;
+        state["toxic_count"] = 0;
+        state["positive_count"] = 0;
+        state["neutral_count"] = 0;
+        state["last_moderation_score"] = 0;
+        state["moderation_threshold"] = 70;  // 70% confidence threshold
+    }
+
+    fn moderate(content: string) {
+        // Run AI inference on content
+        let sentiment_model = ai.model("sentiment");
+        let result = ai.infer(sentiment_model, content);
+        
+        // Store score
+        state["last_moderation_score"] = result.score;
+        
+        // Increment total
+        state["total_moderated"] = state["total_moderated"] + 1;
+        
+        // Classify and count
+        if result.label == "negative" {
+            state["toxic_count"] = state["toxic_count"] + 1;
+            
+            // Strong negative with high confidence = block
+            if result.score > 0.80 {
+                panic("Content rejected: toxic language detected");
+            }
+        }
+        
+        if result.label == "positive" {
+            state["positive_count"] = state["positive_count"] + 1;
+        }
+        
+        if result.label == "neutral" {
+            state["neutral_count"] = state["neutral_count"] + 1;
+        }
+        
+        // Emit event
+        emit("ContentModerated", result.label);
+    }
+
+    fn get_stats() {
+        return state;
+    }
+
+    fn get_moderation_rate() {
+        let total = state["total_moderated"];
+        if total == 0 {
+            return 0;
+        }
+        return state["toxic_count"] / total;
+    }
+
+    fn is_toxic(content: string) {
+        let sentiment = ai.infer(ai.model("sentiment"), content);
+        return sentiment.label == "negative" && sentiment.score > 0.75;
+    }
+}
+
+// Utility function: Batch moderation
+fn moderate_batch(documents: array) {
+    let moderated = 0;
+    let rejected = 0;
+    
+    for doc in documents {
+        if is_toxic(doc) {
+            rejected = rejected + 1;
+        } else {
+            moderated = moderated + 1;
+        }
+    }
+    
+    print("Moderated: " + moderated);
+    print("Rejected: " + rejected);
+    return [moderated, rejected];
+}
+
+// Utility function: Find sentiment distribution
+fn analyze_sentiment_distribution(texts: array) {
+    let positive = 0;
+    let negative = 0;
+    let neutral = 0;
+    
+    let model = ai.model("sentiment");
+    
+    for text in texts {
+        let result = ai.infer(model, text);
+        
+        if result.label == "positive" {
+            positive = positive + 1;
+        } else if result.label == "negative" {
+            negative = negative + 1;
+        } else {
+            neutral = neutral + 1;
+        }
+    }
+    
+    print("Positive: " + positive);
+    print("Negative: " + negative);
+    print("Neutral: " + neutral);
+    
+    return [positive, negative, neutral];
+}
+
+// Main test
+fn main() {
+    print("=== Content Moderation System ===");
+    
+    // Test cases
+    let good_comments = [
+        "This is amazing!",
+        "I love this project",
+        "Excellent work, thank you!",
+        "This is wonderful",
+        "Best thing I've seen"
+    ];
+    
+    let bad_comments = [
+        "This is terrible",
+        "I hate this",
+        "Awful and disgusting",
+        "Worst ever",
+        "Complete garbage"
+    ];
+    
+    let neutral_comments = [
+        "It is what it is",
+        "Okay I guess",
+        "Not bad",
+        "Fine then",
+        "Alright"
+    ];
+    
+    print("\n=== Testing Good Comments ===");
+    analyze_sentiment_distribution(good_comments);
+    
+    print("\n=== Testing Bad Comments ===");
+    analyze_sentiment_distribution(bad_comments);
+    
+    print("\n=== Testing Neutral Comments ===");
+    analyze_sentiment_distribution(neutral_comments);
+    
+    // Combined test
+    print("\n=== Combined Analysis ===");
+    let all_comments = good_comments;
+    // (In a real system, concatenate arrays)
+    analyze_sentiment_distribution(all_comments);
+    
+    // Individual moderation
+    print("\n=== Individual Moderation ===");
+    let test_content = "I absolutely love ASTRIXA language!";
+    print("Testing: " + test_content);
+    
+    let result = ai.infer(ai.model("sentiment"), test_content);
+    print("Sentiment: " + result.label);
+    print("Confidence: " + result.score);
+    
+    // Type checking
+    print("\n=== Type Information ===");
+    print("Type of result: " + type(result));
+    let embeddings = ai.embed("test text");
+    print("Type of embeddings: " + type(embeddings));
+    print("Embedding dimension: " + len(embeddings));
+    
+    // Tokenization
+    print("\n=== Tokenization ===");
+    let tokens = ai.tokenize("Hello world from ASTRIXA");
+    print("Tokens: " + tokens);
+    print("Token count: " + len(tokens));
+}

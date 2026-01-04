@@ -1,0 +1,10 @@
+fn main() {
+    let arr = ["a", "b", "c"]
+    print(len(arr))
+    
+    let name = input("Enter name: ")
+    print(type(name))
+    
+    let numbers = range(1, 5)
+    print(numbers)
+}

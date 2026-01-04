@@ -1,0 +1,33 @@
+// AI-native primitives test
+// Demonstrates sentiment analysis, embeddings, and tokenization
+
+fn main() {
+    // Test sentiment analysis
+    print("=== Sentiment Analysis ===");
+    let result1 = ai.infer(ai.model("sentiment"), "I absolutely love ASTRIXA!");
+    print(result1);
+    
+    let result2 = ai.infer(ai.model("sentiment"), "This is broken and terrible");
+    print(result2);
+    
+    let result3 = ai.infer(ai.model("sentiment"), "It is okay, nothing special");
+    print(result3);
+    
+    // Test tokenization
+    print("=== Tokenization ===");
+    let tokens = ai.tokenize("Hello world from ASTRIXA");
+    print(tokens);
+    print(type(tokens));
+    
+    // Test embeddings
+    print("=== Embeddings ===");
+    let embeddings = ai.embed("ASTRIXA language is awesome");
+    print(embeddings);
+    print(type(embeddings));
+    print(len(embeddings));
+    
+    // Test type introspection
+    print("=== Type Introspection ===");
+    print(type(result1));
+    print(type(result2));
+}

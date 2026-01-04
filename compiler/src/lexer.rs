@@ -4,17 +4,28 @@ pub enum Token {
     Let,
     If,
     Else,
+    While,
+    Return,
+    Import,
+    Contract,
+    AI,
     Identifier(String),
     StringLiteral(String),
     NumberLiteral(i64),
-    Equal,
+    True,
+    False,
+    Assign,
     Plus,
+    Less,
     Greater,
     LeftParen,
     RightParen,
     LeftBrace,
     RightBrace,
+    LeftBracket,
+    RightBracket,
     Comma,
+    Dot,
 }
 
 pub struct Lexer {
@@ -62,16 +73,32 @@ impl Lexer {
                     tokens.push(Token::RightBrace);
                     self.advance();
                 }
+                '[' => {
+                    tokens.push(Token::LeftBracket);
+                    self.advance();
+                }
+                ']' => {
+                    tokens.push(Token::RightBracket);
+                    self.advance();
+                }
                 ',' => {
                     tokens.push(Token::Comma);
                     self.advance();
                 }
-                '=' => {
-                    tokens.push(Token::Equal);
+                '.' => {
+                    tokens.push(Token::Dot);
                     self.advance();
                 }
                 '+' => {
                     tokens.push(Token::Plus);
+                    self.advance();
+                }
+                '=' => {
+                    tokens.push(Token::Assign);
+                    self.advance();
+                }
+                '<' => {
+                    tokens.push(Token::Less);
                     self.advance();
                 }
                 '>' => {
@@ -129,6 +156,13 @@ impl Lexer {
             "let" => Token::Let,
             "if" => Token::If,
             "else" => Token::Else,
+            "while" => Token::While,
+            "return" => Token::Return,
+            "import" => Token::Import,
+            "contract" => Token::Contract,
+            "ai" => Token::AI,
+            "true" => Token::True,
+            "false" => Token::False,
             _ => Token::Identifier(value),
         }
     }
