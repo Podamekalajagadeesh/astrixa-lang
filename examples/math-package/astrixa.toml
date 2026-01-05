@@ -1,0 +1,5 @@
+name = "math"
+version = "0.1.0"
+description = "Basic math utilities for ASTRIXA"
+
+[dependencies]

@@ -2,7 +2,25 @@
 
 A Web3 + AI-native programming language designed for building intelligent blockchain applications and smart contracts. ASTRIXA combines Ethereum-like blockchain primitives with first-class AI operations, enabling developers to build sophisticated DApps without learning multiple languages or frameworks.
 
+**🌐 Now with WebAssembly support - Run Astrixa anywhere: browsers, edge computing, and beyond!**
+**📦 Package Manager - Build and share packages with the ASTRIXA ecosystem!**
+
 ## Features
+
+### 📦 Package Manager (NEW!)
+- **Ecosystem**: Install packages from the ASTRIXA registry
+- **Simple Commands**: `astrixa init`, `astrixa install`, `astrixa list`
+- **Deterministic**: Exact version pinning with lockfile
+- **Secure**: Checksum verification and signed releases (coming soon)
+- **Web3-Safe**: No dependency hell, reproducible builds
+- [Full Package Manager Documentation](PACKAGE_MANAGER.md)
+
+### 🌐 Universal Runtime
+- **WASM Support**: Run Astrixa in web browsers without installation
+- **Cross-Platform**: Native, contracts, and web - same language everywhere
+- **Browser Playground**: Interactive code editor with live execution
+- **Sandbox Security**: Memory-safe, isolated execution environment
+- **Edge Computing**: Deploy to serverless and edge platforms
 
 ### 🔗 Web3 Native
 - **Blockchain Context**: Access chain ID, sender, transaction value, hash, timestamp
@@ -24,6 +42,7 @@ A Web3 + AI-native programming language designed for building intelligent blockc
 - **Bytecode Compiler**: AST-to-bytecode compilation
 - **Stack VM**: Gas-metered virtual machine for efficient execution
 - **Module System**: Import other programs with circular dependency detection
+- **WASM Runtime**: WebAssembly compilation for browser execution
 
 ## Quick Start
 
@@ -32,6 +51,58 @@ A Web3 + AI-native programming language designed for building intelligent blockc
 ```bash
 cd compiler
 cargo build --release
+```
+
+### Package Manager Quick Start
+
+```bash
+# Initialize a new project
+astrixa init my-project
+cd my-project
+
+# Install packages
+astrixa install math
+astrixa install ai-tools
+
+# Create your code
+echo 'import "math"
+
+fn main() {
+    print("10 + 5 =", add(10, 5));
+}' > src/main.ax
+
+# Run it!
+astrixa run src/main.ax
+```
+
+See [PACKAGE_MANAGER.md](PACKAGE_MANAGER.md) for complete documentation.
+
+### Run WASM in Browser
+
+```bash
+# Build WASM module
+./build_wasm.sh
+
+# Start local server
+cd examples
+python3 -m http.server 8000
+
+# Open http://localhost:8000/wasm_playground.html
+```
+
+### Use in JavaScript
+
+```javascript
+import init, { run_astrixa_vm } from './pkg/astrixa.js';
+
+await init();
+
+const result = run_astrixa_vm(`
+    fn main() {
+        print("Hello from browser!")
+    }
+`);
+console.log(result);
 ```
 
 ### Basic AI Usage

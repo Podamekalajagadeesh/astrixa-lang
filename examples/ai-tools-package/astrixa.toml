@@ -1,0 +1,5 @@
+name = "ai-tools"
+version = "0.3.2"
+description = "AI utilities for ASTRIXA applications"
+
+[dependencies]

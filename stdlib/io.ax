@@ -1,0 +1,90 @@
+// ============================================================================
+// ASTRIXA Standard Library - I/O Module
+// Input/Output operations with safe defaults
+// ============================================================================
+
+// Print a message to stdout
+// Safe: No buffer overflows, automatic formatting
+// Example: print("Hello, ASTRIXA!")
+export fn print(message: string) {
+    // Built-in implementation
+}
+
+// Print a value of any type
+// Automatically converts to string representation
+// Example: println(42)
+export fn println(value: any) {
+    // Built-in implementation
+}
+
+// Read a line from stdin
+// Safe: Bounded buffer, no arbitrary input
+// Example: let name = input("Enter name: ")
+export fn input(prompt: string) -> string {
+    // Built-in implementation - returns user input
+}
+
+// Format a string with values
+// Safe: No format string vulnerabilities
+// Example: format("Value: {}, Status: {}", 42, "OK")
+export fn format(template: string, args: array) -> string {
+    // Built-in implementation
+}
+
+// Write raw bytes to stdout
+// Example: write_bytes(bytes)
+export fn write_bytes(data: array) {
+    // Built-in implementation
+}
+
+// Read n bytes from stdin
+// Example: let data = read_bytes(1024)
+export fn read_bytes(count: int) -> array {
+    // Built-in implementation
+}
+
+// Flush output buffer
+// Example: flush()
+export fn flush() {
+    // Built-in implementation
+}
+
+// Get current input stream line number
+export fn line_number() -> int {
+    // Built-in implementation
+}
+
+// Check if input is available
+export fn has_input() -> bool {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: StringBuffer
+// Safe string building with zero-copy semantics
+// ============================================================================
+
+export type StringBuffer {
+    fn new() -> StringBuffer
+    fn append(str: string) -> StringBuffer
+    fn write(value: any) -> StringBuffer
+    fn to_string() -> string
+    fn clear()
+    fn len() -> int
+}
+
+// Create a new string buffer
+export fn StringBuffer::new() -> StringBuffer {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Example Usage
+// ============================================================================
+
+// print("Hello, ASTRIXA!")                    // Output: Hello, ASTRIXA!
+// let name = input("Your name: ")              // Input: Enter name
+// println(name)                                 // Output: name value
+// let msg = format("Hi {}, age {}", name, 25)
+// let buffer = StringBuffer::new()
+// buffer.append("Hello ").append(name).to_string()

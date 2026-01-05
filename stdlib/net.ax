@@ -1,0 +1,181 @@
+// ============================================================================
+// ASTRIXA Standard Library - Network Module
+// Web-first, async-ready HTTP and networking
+// ============================================================================
+
+// HTTP GET request
+// Safe: TLS by default, timeouts enforced
+// Example: let response = http.get("https://api.example.com/data")
+export fn http_get(url: string) -> Response {
+    // Built-in implementation
+}
+
+// HTTP POST request with data
+// Safe: Proper encoding, size limits
+// Example: let response = http.post("https://api.example.com/data", body)
+export fn http_post(url: string, body: string) -> Response {
+    // Built-in implementation
+}
+
+// HTTP PUT request
+// Example: http.put("https://api.example.com/data/1", body)
+export fn http_put(url: string, body: string) -> Response {
+    // Built-in implementation
+}
+
+// HTTP DELETE request
+// Example: http.delete("https://api.example.com/data/1")
+export fn http_delete(url: string) -> Response {
+    // Built-in implementation
+}
+
+// HTTP request with custom options
+// Example: let req = request("GET", url)
+export fn http_request(method: string, url: string) -> Request {
+    // Built-in implementation
+}
+
+// Fetch data from URL as string
+// Safe: Automatic charset detection
+// Example: let html = fetch("https://example.com")
+export fn fetch(url: string) -> string {
+    // Built-in implementation
+}
+
+// Fetch binary data from URL
+// Safe: Respects content-length
+// Example: let data = fetch_bytes("https://example.com/image.png")
+export fn fetch_bytes(url: string) -> array {
+    // Built-in implementation
+}
+
+// Download file from URL
+// Safe: Resume support, progress tracking
+// Example: download("https://example.com/file.zip", "./downloads/file.zip")
+export fn download(url: string, path: string) {
+    // Built-in implementation
+}
+
+// Resolve hostname to IP address
+// Safe: Timeout protection
+// Example: let ip = resolve("example.com")
+export fn resolve(hostname: string) -> string {
+    // Built-in implementation
+}
+
+// Check if host is reachable
+// Example: if is_reachable("example.com") { ... }
+export fn is_reachable(hostname: string) -> bool {
+    // Built-in implementation
+}
+
+// Get current IP address
+// Example: let ip = local_ip()
+export fn local_ip() -> string {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: Response
+// HTTP response with safe defaults
+// ============================================================================
+
+export type Response {
+    status: int          // HTTP status code
+    status_text: string  // "OK", "Not Found", etc.
+    headers: map         // Response headers
+    body: string         // Response body
+    bytes: array         // Response as bytes
+    url: string          // Final URL (after redirects)
+    
+    fn json() -> object          // Parse as JSON
+    fn text() -> string          // Get body as text
+    fn binary() -> array         // Get body as bytes
+    fn header(name: string) -> string  // Get header value
+    fn is_ok() -> bool           // Check if status 200-299
+    fn is_error() -> bool        // Check if status 400+
+}
+
+// ============================================================================
+// Type: Request
+// Safe HTTP request builder with sensible defaults
+// ============================================================================
+
+export type Request {
+    fn header(name: string, value: string) -> Request  // Add header
+    fn body(data: string) -> Request                    // Set body
+    fn json(data: object) -> Request                    // Set JSON body
+    fn timeout(seconds: int) -> Request                 // Set timeout
+    fn follow_redirects(follow: bool) -> Request        // Follow 30x
+    fn send() -> Response                               // Send request
+}
+
+// Create custom request
+export fn Request::new(method: string, url: string) -> Request {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: Server
+// Minimal web server for building APIs
+// ============================================================================
+
+export type Server {
+    fn route(method: string, path: string, handler: fn) -> Server
+    fn listen(port: int)
+    fn stop()
+    fn set_timeout(seconds: int) -> Server
+}
+
+// Create HTTP server
+// Example: let server = Server::new()
+export fn Server::new() -> Server {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: Middleware
+// Request/response processing
+// ============================================================================
+
+export type Middleware {
+    fn before(handler: fn) -> Middleware
+    fn after(handler: fn) -> Middleware
+}
+
+// ============================================================================
+// WebSocket Support
+// ============================================================================
+
+export type WebSocket {
+    fn new(url: string) -> WebSocket
+    fn connect()
+    fn send(data: string)
+    fn on_message(handler: fn)
+    fn on_error(handler: fn)
+    fn close()
+}
+
+// ============================================================================
+// Example Usage
+// ============================================================================
+
+// let response = http_get("https://api.example.com/users")
+// if response.is_ok() {
+//     let users = response.json()
+// }
+//
+// let data = json.stringify({name: "John", age: 30})
+// let post = http_post("https://api.example.com/users", data)
+//
+// let server = Server::new()
+// server.route("GET", "/api/users", fn(req, res) {
+//     res.json([{name: "John"}, {name: "Jane"}])
+// })
+// server.listen(8080)
+//
+// let ws = WebSocket::new("wss://example.com/socket")
+// ws.on_message(fn(msg) {
+//     print("Received:", msg)
+// })
+// ws.connect()

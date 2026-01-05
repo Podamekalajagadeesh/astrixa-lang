@@ -1,0 +1,87 @@
+{
+  "name": "astrixa",
+  "displayName": "ASTRIXA",
+  "description": "First-class AI language - autocomplete, instant errors, go-to-definition",
+  "version": "0.1.0",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Formatters"
+  ],
+  "keywords": [
+    "astrixa",
+    "language",
+    "ai",
+    "web3",
+    "async"
+  ],
+  "publisher": "ASTRIXA",
+  "icon": "icon.png",
+  "main": "./out/extension.js",
+  "activationEvents": [
+    "onLanguage:astrixa",
+    "workspaceContains:**.ax"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "astrixa",
+        "aliases": [
+          "ASTRIXA",
+          "astrixa"
+        ],
+        "extensions": [
+          ".ax"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "astrixa",
+        "scopeName": "source.astrixa",
+        "path": "./syntaxes/astrixa.tmLanguage.json"
+      }
+    ],
+    "configuration": {
+      "type": "object",
+      "title": "ASTRIXA",
+      "properties": {
+        "astrixa.lsp.path": {
+          "scope": "resource",
+          "type": "string",
+          "default": "astrixa-lsp",
+          "description": "Path to the astrixa-lsp binary"
+        },
+        "astrixa.lsp.debug": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": false,
+          "description": "Enable LSP debug logging"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src --ext ts",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.75.0",
+    "@types/node": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^5.45.0",
+    "@typescript-eslint/parser": "^5.45.0",
+    "eslint": "^8.29.0",
+    "typescript": "^4.9.4"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^8.1.0"
+  }
+}

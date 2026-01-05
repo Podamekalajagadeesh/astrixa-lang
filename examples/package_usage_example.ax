@@ -1,0 +1,21 @@
+// Example: Using ASTRIXA package manager
+
+import "math"
+
+fn main() {
+    print("Testing ASTRIXA math package:");
+    
+    let a = 10;
+    let b = 5;
+    
+    print("Addition: 10 + 5 =", add(a, b));
+    print("Subtraction: 10 - 5 =", subtract(a, b));
+    print("Multiplication: 10 * 5 =", multiply(a, b));
+    print("Division: 10 / 5 =", divide(a, b));
+    print("Power: 2^8 =", power(2, 8));
+    print("Factorial: 5! =", factorial(5));
+    print("Max: max(10, 5) =", max(a, b));
+    print("Min: min(10, 5) =", min(a, b));
+    print("Is 10 even?", is_even(a));
+    print("Is 5 odd?", is_odd(b));
+}

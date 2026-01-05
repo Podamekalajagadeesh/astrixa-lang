@@ -1,0 +1,257 @@
+// ============================================================================
+// ASTRIXA Standard Library - Async Module
+// Native async/await, not bolted-on like JavaScript
+// First-class async support in the language
+// ============================================================================
+
+// Await a promise/future to completion
+// Safe: Automatic cancellation, timeout protection
+// Example: let result = await fetch_data()
+export fn await(promise: Promise) -> any {
+    // Built-in implementation - language primitive
+}
+
+// Sleep for specified milliseconds
+// Async-friendly: Doesn't block thread
+// Example: await sleep(1000)
+export fn sleep(milliseconds: int) {
+    // Built-in implementation
+}
+
+// Sleep for specified seconds
+// Example: await sleep_sec(5)
+export fn sleep_sec(seconds: int) {
+    // Built-in implementation
+}
+
+// Spawn a new async task
+// Safe: Automatic cleanup, scope-based
+// Example: spawn(fn() { do_work() })
+export fn spawn(task: fn) -> Task {
+    // Built-in implementation
+}
+
+// Spawn a task with a timeout
+// Example: spawn_with_timeout(fn() { ... }, 5000)
+export fn spawn_with_timeout(task: fn, timeout_ms: int) -> Task {
+    // Built-in implementation
+}
+
+// Create a channel for communication
+// Safe: MPMC, no data races
+// Example: let (tx, rx) = channel()
+export fn channel() -> (Sender, Receiver) {
+    // Built-in implementation
+}
+
+// Create a broadcast channel
+// Example: let (tx, rx) = broadcast_channel(10)
+export fn broadcast_channel(capacity: int) -> (BroadcastSender, BroadcastReceiver) {
+    // Built-in implementation
+}
+
+// Join multiple tasks, waiting for all
+// Example: await join_all([task1, task2, task3])
+export fn join_all(tasks: array) -> array {
+    // Built-in implementation
+}
+
+// Run tasks concurrently, return first success
+// Example: let result = await race(task1, task2)
+export fn race(promises: array) -> any {
+    // Built-in implementation
+}
+
+// Create a promise that resolves after timeout
+// Example: let timeout = timeout_promise(5000)
+export fn timeout_promise(milliseconds: int) -> Promise {
+    // Built-in implementation
+}
+
+// Run a function with timeout
+// Safe: Automatic cancellation
+// Example: let result = await timeout(fn() { ... }, 3000)
+export fn timeout(task: fn, milliseconds: int) -> any {
+    // Built-in implementation
+}
+
+// Retry a task with exponential backoff
+// Example: let result = await retry(fn() { ... }, 3)
+export fn retry(task: fn, max_attempts: int) -> any {
+    // Built-in implementation
+}
+
+// Batch multiple async operations
+// Example: let results = await batch([task1, task2], batch_size: 5)
+export fn batch(tasks: array, batch_size: int) -> array {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: Promise
+// Async computation that completes later
+// ============================================================================
+
+export type Promise {
+    fn then(callback: fn) -> Promise
+    fn catch(handler: fn) -> Promise
+    fn finally(handler: fn) -> Promise
+    fn is_pending() -> bool
+    fn is_complete() -> bool
+    fn cancel()
+}
+
+// Create a promise
+export fn Promise::new(executor: fn) -> Promise {
+    // Built-in implementation
+}
+
+// Resolve a promise
+export fn Promise::resolve(value: any) -> Promise {
+    // Built-in implementation
+}
+
+// Reject a promise
+export fn Promise::reject(error: string) -> Promise {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: Task
+// Spawned async task with lifecycle
+// ============================================================================
+
+export type Task {
+    fn await() -> any           // Wait for completion
+    fn cancel()                 // Cancel task
+    fn is_running() -> bool
+    fn is_complete() -> bool
+}
+
+// ============================================================================
+// Type: Sender/Receiver
+// MPMC channel for async communication
+// ============================================================================
+
+export type Sender {
+    fn send(value: any)         // Send value
+    fn send_async(value: any)   // Non-blocking send
+    fn close()
+}
+
+export type Receiver {
+    fn recv() -> any            // Receive value
+    fn recv_async() -> any      // Non-blocking receive
+    fn try_recv() -> Result
+}
+
+// ============================================================================
+// Type: Mutex
+// Async-safe mutual exclusion
+// ============================================================================
+
+export type Mutex {
+    fn lock() -> Guard
+    fn try_lock() -> Result
+    fn is_locked() -> bool
+}
+
+// Create new mutex
+export fn Mutex::new(value: any) -> Mutex {
+    // Built-in implementation
+}
+
+export type Guard {
+    fn get() -> any
+    fn set(value: any)
+}
+
+// ============================================================================
+// Type: RwLock
+// Reader-writer lock for high-concurrency scenarios
+// ============================================================================
+
+export type RwLock {
+    fn read() -> ReadGuard
+    fn write() -> WriteGuard
+}
+
+// Create new RwLock
+export fn RwLock::new(value: any) -> RwLock {
+    // Built-in implementation
+}
+
+export type ReadGuard {
+    fn get() -> any
+}
+
+export type WriteGuard {
+    fn get() -> any
+    fn set(value: any)
+}
+
+// ============================================================================
+// Type: Semaphore
+// Count-based synchronization primitive
+// ============================================================================
+
+export type Semaphore {
+    fn acquire()
+    fn release()
+    fn try_acquire() -> bool
+}
+
+// Create new semaphore
+export fn Semaphore::new(permits: int) -> Semaphore {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Example Usage
+// ============================================================================
+
+// Basic async/await:
+// fn async fetch_user(id: int) {
+//     let response = await http_get("https://api.example.com/users/" + id)
+//     return response.json()
+// }
+//
+// Spawn tasks:
+// spawn(fn() {
+//     print("Running in background")
+// })
+//
+// Channel communication:
+// let (tx, rx) = channel()
+// spawn(fn() {
+//     tx.send("Hello from task")
+// })
+// let msg = await rx.recv()
+//
+// Timeout:
+// try {
+//     let result = await timeout(fn() {
+//         return fetch_data()
+//     }, 5000)
+// } catch {
+//     print("Request timeout")
+// }
+//
+// Retry with backoff:
+// let data = await retry(fn() {
+//     return http_get("api.example.com/data")
+// }, 3)
+//
+// Concurrent requests:
+// let results = await join_all([
+//     fetch_user(1),
+//     fetch_user(2),
+//     fetch_user(3)
+// ])
+//
+// Mutex for shared state:
+// let counter = Mutex::new(0)
+// spawn(fn() {
+//     let guard = counter.lock()
+//     guard.set(guard.get() + 1)
+// })

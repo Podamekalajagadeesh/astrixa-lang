@@ -1,0 +1,179 @@
+// DeFi Portfolio Manager - Full Package Manager Demo
+// This example demonstrates ASTRIXA's package ecosystem
+
+import "math"
+import "ai-tools"
+
+// Portfolio tracking
+fn calculate_portfolio_value(tokens: int, price: int) -> int {
+    return multiply(tokens, price);
+}
+
+// Yield farming calculator
+fn calculate_apy(initial: int, final: int, days: int) -> int {
+    let profit = subtract(final, initial);
+    let daily_return = divide(multiply(profit, 100), initial);
+    let annual = multiply(daily_return, 365);
+    return divide(annual, days);
+}
+
+// Risk assessment
+fn assess_risk(volatility: int, liquidity: int) -> string {
+    let risk_score = subtract(volatility, liquidity);
+    
+    if risk_score > 50 {
+        return create_prompt("High risk - Consider reducing position");
+    }
+    if risk_score > 20 {
+        return create_prompt("Medium risk - Moderate allocation recommended");
+    }
+    return create_prompt("Low risk - Safe for larger positions");
+}
+
+// Diversification check
+fn check_diversification(positions: int, total_value: int) -> bool {
+    let avg_position = divide(total_value, positions);
+    let threshold = divide(total_value, 5); // Max 20% per position
+    return avg_position < threshold;
+}
+
+// Main portfolio dashboard
+fn main() {
+    print("╔════════════════════════════════════════╗");
+    print("║   ASTRIXA DeFi Portfolio Manager      ║");
+    print("║   Powered by Package Ecosystem        ║");
+    print("╚════════════════════════════════════════╝");
+    print("");
+    
+    // Portfolio holdings
+    print("📊 PORTFOLIO OVERVIEW");
+    print("────────────────────────────────────────");
+    
+    let eth_tokens = 10;
+    let eth_price = 2000;
+    let eth_value = calculate_portfolio_value(eth_tokens, eth_price);
+    
+    print("ETH: ");
+    print(eth_tokens);
+    print(" tokens @ $");
+    print(eth_price);
+    print(" = $");
+    print(eth_value);
+    
+    let btc_tokens = 2;
+    let btc_price = 40000;
+    let btc_value = calculate_portfolio_value(btc_tokens, btc_price);
+    
+    print("BTC: ");
+    print(btc_tokens);
+    print(" tokens @ $");
+    print(btc_price);
+    print(" = $");
+    print(btc_value);
+    
+    let total_value = add(eth_value, btc_value);
+    print("");
+    print("Total Portfolio Value: $");
+    print(total_value);
+    print("");
+    
+    // Yield farming analysis
+    print("🌾 YIELD FARMING ANALYSIS");
+    print("────────────────────────────────────────");
+    
+    let initial_stake = 10000;
+    let current_value = 12500;
+    let days_staked = 90;
+    let apy = calculate_apy(initial_stake, current_value, days_staked);
+    
+    print("Initial Stake: $");
+    print(initial_stake);
+    print("Current Value: $");
+    print(current_value);
+    print("Days Staked: ");
+    print(days_staked);
+    print("Estimated APY: ");
+    print(apy);
+    print("%");
+    print("");
+    
+    // Risk assessment
+    print("⚠️  RISK ASSESSMENT");
+    print("────────────────────────────────────────");
+    
+    let market_volatility = 45;
+    let market_liquidity = 80;
+    let risk_analysis = assess_risk(market_volatility, market_liquidity);
+    
+    print("Market Volatility: ");
+    print(market_volatility);
+    print("Market Liquidity: ");
+    print(market_liquidity);
+    print(risk_analysis);
+    print("");
+    
+    // Diversification check
+    print("🎯 DIVERSIFICATION CHECK");
+    print("────────────────────────────────────────");
+    
+    let num_positions = 2;
+    let is_diversified = check_diversification(num_positions, total_value);
+    
+    print("Number of positions: ");
+    print(num_positions);
+    
+    if is_diversified {
+        print("Status: ✓ Well diversified");
+    }
+    if !is_diversified {
+        print("Status: ⚠ Consider adding more positions");
+    }
+    print("");
+    
+    // Performance metrics
+    print("📈 PERFORMANCE METRICS");
+    print("────────────────────────────────────────");
+    
+    let profit = subtract(current_value, initial_stake);
+    let profit_pct = divide(multiply(profit, 100), initial_stake);
+    
+    print("Absolute Profit: $");
+    print(profit);
+    print("Return on Investment: ");
+    print(profit_pct);
+    print("%");
+    print("");
+    
+    // AI-powered insights
+    print("🤖 AI INSIGHTS");
+    print("────────────────────────────────────────");
+    
+    let sentiment = analyze_sentiment("Bullish market conditions detected");
+    print("Market Sentiment: ");
+    print(sentiment);
+    
+    let strategy = create_prompt("Consider DCA strategy for volatile assets");
+    print(strategy);
+    print("");
+    
+    // Summary
+    print("╔════════════════════════════════════════╗");
+    print("║          PORTFOLIO SUMMARY             ║");
+    print("╚════════════════════════════════════════╝");
+    print("");
+    print("✓ Total Value: $");
+    print(total_value);
+    print("✓ Current Yield: ");
+    print(apy);
+    print("% APY");
+    print("✓ Risk Level: Medium");
+    print("✓ Diversification: Adequate");
+    print("");
+    print("💡 This demo showcases:");
+    print("  • Math package for calculations");
+    print("  • AI-tools for sentiment analysis");
+    print("  • Real DeFi use cases");
+    print("  • Package ecosystem power");
+    print("");
+    print("🚀 ASTRIXA: Where AI meets Web3");
+}

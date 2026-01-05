@@ -1,0 +1,286 @@
+// ============================================================================
+// ASTRIXA Standard Library - Crypto Module
+// Web3-first cryptography without complexity
+// Safe by default: No weak algorithms, proper randomness
+// ============================================================================
+
+// ============================================================================
+// Hashing
+// ============================================================================
+
+// SHA-256 hash (Web3 standard)
+// Safe: Fixed output, collision-resistant
+// Example: let hash = sha256("password")
+export fn sha256(data: string) -> string {
+    // Built-in implementation - returns hex string
+}
+
+// SHA-256 hash of bytes
+// Example: let hash = sha256_bytes(data)
+export fn sha256_bytes(data: array) -> array {
+    // Built-in implementation - returns byte array
+}
+
+// Keccak-256 hash (Ethereum standard)
+// Example: let hash = keccak256("data")
+export fn keccak256(data: string) -> string {
+    // Built-in implementation
+}
+
+// BLAKE2b hash (faster than SHA-256)
+// Example: let hash = blake2b(data)
+export fn blake2b(data: string) -> string {
+    // Built-in implementation
+}
+
+// MD5 (deprecated but available for compatibility)
+// ⚠️ Warning: Not cryptographically secure, use SHA-256
+// Example: let hash = md5(data)
+export fn md5(data: string) -> string {
+    // Built-in implementation
+}
+
+// HMAC-SHA256 (message authentication)
+// Safe: Key-based authentication
+// Example: let auth = hmac_sha256("message", "secret_key")
+export fn hmac_sha256(message: string, key: string) -> string {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Digital Signatures (Web3)
+// ============================================================================
+
+// Sign data with private key (ECDSA)
+// Safe: Automatic nonce generation, deterministic
+// Example: let signature = sign(private_key, message)
+export fn sign(private_key: string, message: string) -> Signature {
+    // Built-in implementation
+}
+
+// Verify signature with public key
+// Safe: Constant-time comparison
+// Example: if verify(public_key, message, signature) { ... }
+export fn verify(public_key: string, message: string, signature: Signature) -> bool {
+    // Built-in implementation
+}
+
+// Recover public key from signature
+// Useful for Ethereum-style verification
+// Example: let pub_key = recover_key(message, signature)
+export fn recover_key(message: string, signature: Signature) -> string {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Key Generation (Web3)
+// ============================================================================
+
+// Generate new ECDSA keypair
+// Safe: Cryptographically secure randomness
+// Example: let (pub, priv) = generate_keypair()
+export fn generate_keypair() -> (string, string) {
+    // Built-in implementation - (public_key, private_key)
+}
+
+// Generate new keypair with custom curve
+// Example: let pair = generate_keypair_secp256k1()  // Ethereum
+export fn generate_keypair_secp256k1() -> KeyPair {
+    // Built-in implementation
+}
+
+// Get public key from private key
+// Example: let pub = public_key("private_key_hex")
+export fn public_key(private_key: string) -> string {
+    // Built-in implementation
+}
+
+// Derive address from public key (Ethereum-style)
+// Example: let addr = address_from_pubkey(pub_key)
+export fn address_from_pubkey(public_key: string) -> string {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Encryption (Symmetric)
+// ============================================================================
+
+// AES-256-GCM encryption
+// Safe: AEAD mode prevents tampering
+// Example: let encrypted = encrypt_aes256("plaintext", "key")
+export fn encrypt_aes256(plaintext: string, key: string) -> Encrypted {
+    // Built-in implementation
+}
+
+// AES-256-GCM decryption
+// Safe: Verifies authenticity tag
+// Example: let plaintext = decrypt_aes256(encrypted, "key")
+export fn decrypt_aes256(encrypted: Encrypted, key: string) -> string {
+    // Built-in implementation
+}
+
+// ChaCha20-Poly1305 encryption (modern alternative)
+// Example: let encrypted = encrypt_chacha20(text, key)
+export fn encrypt_chacha20(plaintext: string, key: string) -> Encrypted {
+    // Built-in implementation
+}
+
+// ChaCha20-Poly1305 decryption
+export fn decrypt_chacha20(encrypted: Encrypted, key: string) -> string {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Encryption (Asymmetric)
+// ============================================================================
+
+// RSA encryption (for key exchange)
+// Safe: OAEP padding
+// Example: let encrypted = rsa_encrypt(public_key, plaintext)
+export fn rsa_encrypt(public_key: string, plaintext: string) -> string {
+    // Built-in implementation
+}
+
+// RSA decryption
+export fn rsa_decrypt(private_key: string, ciphertext: string) -> string {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Random Number Generation
+// ============================================================================
+
+// Generate random bytes
+// Safe: Cryptographically secure randomness
+// Example: let nonce = random_bytes(32)
+export fn random_bytes(count: int) -> array {
+    // Built-in implementation
+}
+
+// Generate random string (hex)
+// Example: let token = random_hex(16)
+export fn random_hex(count: int) -> string {
+    // Built-in implementation
+}
+
+// Generate random integer
+// Safe: Unbias rejection sampling
+// Example: let value = random_int(1, 100)
+export fn random_int(min: int, max: int) -> int {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Key Derivation
+// ============================================================================
+
+// PBKDF2 key derivation (password-based)
+// Safe: Multiple iterations, salt-based
+// Example: let key = pbkdf2("password", "salt")
+export fn pbkdf2(password: string, salt: string) -> string {
+    // Built-in implementation
+}
+
+// Argon2 key derivation (modern, memory-hard)
+// Example: let key = argon2("password", "salt")
+export fn argon2(password: string, salt: string) -> string {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+// Convert hex string to bytes
+// Example: let bytes = hex_to_bytes("48656c6c6f")
+export fn hex_to_bytes(hex: string) -> array {
+    // Built-in implementation
+}
+
+// Convert bytes to hex string
+// Example: let hex = bytes_to_hex(bytes)
+export fn bytes_to_hex(bytes: array) -> string {
+    // Built-in implementation
+}
+
+// Base64 encode
+// Example: let encoded = base64_encode("Hello")
+export fn base64_encode(data: string) -> string {
+    // Built-in implementation
+}
+
+// Base64 decode
+// Example: let decoded = base64_decode(encoded)
+export fn base64_decode(encoded: string) -> string {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: Signature
+// Digital signature result
+// ============================================================================
+
+export type Signature {
+    r: string           // Signature component
+    s: string           // Signature component
+    v: int              // Recovery parameter (for Ethereum)
+    to_string() -> string
+    to_bytes() -> array
+}
+
+// ============================================================================
+// Type: KeyPair
+// Asymmetric key pair
+// ============================================================================
+
+export type KeyPair {
+    public_key: string
+    private_key: string
+    
+    fn sign(message: string) -> Signature
+    fn export_private(format: string) -> string
+    fn export_public(format: string) -> string
+}
+
+// ============================================================================
+// Type: Encrypted
+// Encrypted data with metadata
+// ============================================================================
+
+export type Encrypted {
+    ciphertext: array
+    nonce: array        // IV or nonce
+    tag: array          // Authentication tag (for AEAD)
+    to_string() -> string
+    to_base64() -> string
+}
+
+// ============================================================================
+// Example Usage
+// ============================================================================
+
+// Hashing:
+// let hash = sha256("password")
+// let auth = hmac_sha256("data", "secret")
+//
+// Web3 Signing:
+// let (pub, priv) = generate_keypair()
+// let sig = sign(priv, "transaction_hash")
+// if verify(pub, "transaction_hash", sig) {
+//     print("Signature valid!")
+// }
+//
+// Encryption:
+// let encrypted = encrypt_aes256("secret message", "encryption_key")
+// let plaintext = decrypt_aes256(encrypted, "encryption_key")
+//
+// Key derivation:
+// let key = pbkdf2("user_password", "random_salt")
+//
+// Random:
+// let nonce = random_bytes(32)
+// let token = random_hex(16)
+//
+// Encoding:
+// let hex_str = bytes_to_hex([72, 101, 108, 108, 111])  // "48656c6c6f"
+// let b64 = base64_encode("Hello World")

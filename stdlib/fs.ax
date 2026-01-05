@@ -1,0 +1,164 @@
+// ============================================================================
+// ASTRIXA Standard Library - File System Module
+// Safe, async-friendly file operations
+// ============================================================================
+
+// Read entire file as string
+// Safe: Respects file permissions, bounded reads
+// Example: let content = fs.read("data.txt")
+export fn read(path: string) -> string {
+    // Built-in implementation
+}
+
+// Read file as array of bytes
+// Example: let bytes = read_bytes("image.png")
+export fn read_bytes(path: string) -> array {
+    // Built-in implementation
+}
+
+// Write string to file
+// Safe: Atomic writes, no partial data
+// Example: fs.write("output.txt", "Hello World")
+export fn write(path: string, content: string) {
+    // Built-in implementation
+}
+
+// Write bytes to file
+// Example: write_bytes("data.bin", bytes)
+export fn write_bytes(path: string, data: array) {
+    // Built-in implementation
+}
+
+// Append to file
+// Example: append("log.txt", "New entry\n")
+export fn append(path: string, content: string) {
+    // Built-in implementation
+}
+
+// Check if file exists
+// Example: if exists("config.toml") { ... }
+export fn exists(path: string) -> bool {
+    // Built-in implementation
+}
+
+// Delete a file
+// Safe: Respects permissions, cannot delete directories
+// Example: delete("temp.txt")
+export fn delete(path: string) {
+    // Built-in implementation
+}
+
+// Get file size in bytes
+// Example: let size = file_size("data.bin")
+export fn file_size(path: string) -> int {
+    // Built-in implementation
+}
+
+// List files in directory
+// Safe: Cannot traverse outside directory
+// Example: let files = list_dir("./data")
+export fn list_dir(path: string) -> array {
+    // Built-in implementation - returns array of file names
+}
+
+// Get file metadata
+// Example: let meta = stat("file.txt")
+export fn stat(path: string) -> FileMetadata {
+    // Built-in implementation
+}
+
+// Create directory
+// Safe: Respects existing paths
+// Example: mkdir("output")
+export fn mkdir(path: string) {
+    // Built-in implementation
+}
+
+// Create directories recursively
+// Example: mkdir_all("output/data/logs")
+export fn mkdir_all(path: string) {
+    // Built-in implementation
+}
+
+// Delete empty directory
+// Safe: Only works on empty dirs
+// Example: rmdir("empty_folder")
+export fn rmdir(path: string) {
+    // Built-in implementation
+}
+
+// Get absolute path
+// Example: let abs = absolute_path("./data")
+export fn absolute_path(path: string) -> string {
+    // Built-in implementation
+}
+
+// Get current working directory
+// Example: let cwd = current_dir()
+export fn current_dir() -> string {
+    // Built-in implementation
+}
+
+// Change working directory
+// Example: change_dir("/path/to/dir")
+export fn change_dir(path: string) {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: FileMetadata
+// Information about a file
+// ============================================================================
+
+export type FileMetadata {
+    path: string
+    size: int
+    is_file: bool
+    is_dir: bool
+    modified: int  // Unix timestamp
+}
+
+// ============================================================================
+// Type: File
+// Safe file handle with automatic cleanup
+// ============================================================================
+
+export type File {
+    fn open(path: string) -> File
+    fn open_write(path: string) -> File
+    fn open_append(path: string) -> File
+    fn read_line() -> string
+    fn write(data: string)
+    fn close()
+    fn is_open() -> bool
+}
+
+// Open file for reading
+export fn File::open(path: string) -> File {
+    // Built-in implementation
+}
+
+// Open file for writing (truncate)
+export fn File::open_write(path: string) -> File {
+    // Built-in implementation
+}
+
+// Open file for appending
+export fn File::open_append(path: string) -> File {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Example Usage
+// ============================================================================
+
+// let content = read("config.txt")
+// write("output.txt", "Hello, World!")
+// if exists("data.json") {
+//     let json = read("data.json")
+// }
+// let files = list_dir("./src")
+// mkdir_all("output/reports/2026")
+// let file = File::open("data.txt")
+// let line = file.read_line()
+// file.close()

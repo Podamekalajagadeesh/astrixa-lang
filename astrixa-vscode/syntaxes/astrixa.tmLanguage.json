@@ -1,0 +1,116 @@
+{
+  "name": "ASTRIXA",
+  "patterns": [
+    {
+      "include": "#comments"
+    },
+    {
+      "include": "#strings"
+    },
+    {
+      "include": "#numbers"
+    },
+    {
+      "include": "#keywords"
+    },
+    {
+      "include": "#types"
+    },
+    {
+      "include": "#functions"
+    },
+    {
+      "include": "#operators"
+    }
+  ],
+  "repository": {
+    "comments": {
+      "patterns": [
+        {
+          "name": "comment.line.astrixa",
+          "match": "//.*$"
+        },
+        {
+          "name": "comment.block.astrixa",
+          "begin": "/\\*",
+          "end": "\\*/"
+        }
+      ]
+    },
+    "strings": {
+      "patterns": [
+        {
+          "name": "string.quoted.double.astrixa",
+          "begin": "\"",
+          "end": "\"",
+          "patterns": [
+            {
+              "name": "constant.character.escape.astrixa",
+              "match": "\\\\."
+            }
+          ]
+        },
+        {
+          "name": "string.quoted.single.astrixa",
+          "begin": "'",
+          "end": "'",
+          "patterns": [
+            {
+              "name": "constant.character.escape.astrixa",
+              "match": "\\\\."
+            }
+          ]
+        }
+      ]
+    },
+    "numbers": {
+      "patterns": [
+        {
+          "name": "constant.numeric.astrixa",
+          "match": "\\b\\d+(\\.\\d+)?\\b"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "name": "keyword.control.astrixa",
+          "match": "\\b(if|else|for|while|break|continue|return|async|await|import|export|match)\\b"
+        },
+        {
+          "name": "keyword.declaration.astrixa",
+          "match": "\\b(fn|let|type|struct|enum|const)\\b"
+        },
+        {
+          "name": "constant.language.astrixa",
+          "match": "\\b(true|false|null)\\b"
+        }
+      ]
+    },
+    "types": {
+      "patterns": [
+        {
+          "name": "entity.name.type.astrixa",
+          "match": "\\b(String|Int|Float|Bool|Byte|List|Dict|Object|Promise|Task|Option|Result)\\b"
+        }
+      ]
+    },
+    "functions": {
+      "patterns": [
+        {
+          "name": "entity.name.function.astrixa",
+          "match": "\\b(print|input|read|write|http_get|http_post|parse|stringify|generate|classify|sha256|sign|sleep|spawn)\\b"
+        }
+      ]
+    },
+    "operators": {
+      "patterns": [
+        {
+          "name": "keyword.operator.astrixa",
+          "match": "([+\\-*/%]|==|!=|<=|>=|&&|\\|\\||!|\\||&|\\^|<<|>>)"
+        }
+      ]
+    }
+  },
+  "scopeName": "source.astrixa"
+}

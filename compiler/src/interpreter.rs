@@ -3,6 +3,7 @@ use crate::ast::{Expr, Stmt, Function, Contract};
 use crate::lexer::Lexer;
 use crate::parser::Parser;
 use crate::ai_runtime::{AIRuntime, LocalAIRuntime};
+use crate::package_manager::PackageManager;
 
 #[derive(Clone)]
 pub struct BlockchainContext {
@@ -417,9 +418,23 @@ impl Interpreter {
 
         self.loaded_modules.insert(name.to_string());
 
-        let filename = format!("{}.ax", name);
-        let source = std::fs::read_to_string(&filename)
-            .map_err(|_| format!("Error: Cannot find module '{}'", name))?;
+        // First, try to load from installed packages
+        let source = if let Ok(pm) = PackageManager::new() {
+            if let Some(package_path) = pm.resolve_import(name) {
+                std::fs::read_to_string(&package_path)
+                    .map_err(|_| format!("Error: Cannot read package module '{}'", name))?
+            } else {
+                // Fall back to local file
+                let filename = format!("{}.ax", name);
+                std::fs::read_to_string(&filename)
+                    .map_err(|_| format!("Error: Cannot find module '{}' (tried package and local file)", name))?
+            }
+        } else {
+            // Package manager not available, try local file
+            let filename = format!("{}.ax", name);
+            std::fs::read_to_string(&filename)
+                .map_err(|_| format!("Error: Cannot find module '{}'", name))?
+        };
 
         let mut lexer = Lexer::new(&source);
         let tokens = lexer.tokenize();

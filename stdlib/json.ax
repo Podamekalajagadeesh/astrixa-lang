@@ -1,0 +1,192 @@
+// ============================================================================
+// ASTRIXA Standard Library - JSON Module
+// Safe, modern JSON handling without magic
+// ============================================================================
+
+// Parse JSON string to object
+// Safe: Validates structure, bounds-checked
+// Example: let obj = json.parse('{"name":"John","age":30}')
+export fn parse(text: string) -> object {
+    // Built-in implementation
+}
+
+// Convert object to JSON string
+// Safe: Circular reference detection
+// Example: let json_str = json.stringify({name: "John"})
+export fn stringify(obj: object) -> string {
+    // Built-in implementation
+}
+
+// Stringify with pretty formatting
+// Example: let pretty = stringify_pretty({name: "John"}, 2)
+export fn stringify_pretty(obj: object, indent: int) -> string {
+    // Built-in implementation
+}
+
+// Parse JSON and return with error information
+// Safe: Returns error instead of panicking
+// Example: let result = try_parse(text)
+export fn try_parse(text: string) -> Result {
+    // Built-in implementation
+}
+
+// Validate JSON string
+// Example: if is_valid_json(text) { ... }
+export fn is_valid_json(text: string) -> bool {
+    // Built-in implementation
+}
+
+// Get value at path in JSON object
+// Safe: Returns null for missing paths
+// Example: let name = get_path(obj, "user.profile.name")
+export fn get_path(obj: object, path: string) -> any {
+    // Built-in implementation
+}
+
+// Set value at path in JSON object
+// Example: set_path(obj, "user.name", "John")
+export fn set_path(obj: object, path: string, value: any) {
+    // Built-in implementation
+}
+
+// Merge two JSON objects
+// Safe: Right object overwrites left
+// Example: let merged = merge({a: 1}, {b: 2})
+export fn merge(obj1: object, obj2: object) -> object {
+    // Built-in implementation
+}
+
+// Deep clone JSON object
+// Example: let copy = clone(original)
+export fn clone(obj: object) -> object {
+    // Built-in implementation
+}
+
+// Check if JSON contains a key
+// Example: if has_key(obj, "email") { ... }
+export fn has_key(obj: object, key: string) -> bool {
+    // Built-in implementation
+}
+
+// Get all keys in JSON object
+// Example: let keys = keys(obj)
+export fn keys(obj: object) -> array {
+    // Built-in implementation
+}
+
+// Get all values in JSON object
+// Example: let values = values(obj)
+export fn values(obj: object) -> array {
+    // Built-in implementation
+}
+
+// Convert JSON array to CSV string
+// Example: let csv = to_csv(array_of_objects)
+export fn to_csv(data: array) -> string {
+    // Built-in implementation
+}
+
+// Parse CSV to JSON array
+// Example: let data = from_csv(csv_text)
+export fn from_csv(text: string) -> array {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: Result
+// Safe error handling for parsing
+// ============================================================================
+
+export type Result {
+    success: bool
+    value: object        // If success == true
+    error: string        // If success == false
+    error_line: int      // Line where error occurred
+    error_pos: int       // Position in text
+    
+    fn unwrap() -> object            // Get value or panic
+    fn unwrap_or(default: object) -> object  // Get value or default
+    fn is_ok() -> bool
+    fn is_err() -> bool
+}
+
+// ============================================================================
+// Type: JSONBuilder
+// Safe JSON construction without string concatenation
+// ============================================================================
+
+export type JSONBuilder {
+    fn new() -> JSONBuilder
+    fn add(key: string, value: any) -> JSONBuilder
+    fn add_object(key: string, value: object) -> JSONBuilder
+    fn add_array(key: string, value: array) -> JSONBuilder
+    fn build() -> object
+    fn to_string() -> string
+}
+
+// Create new JSON builder
+export fn JSONBuilder::new() -> JSONBuilder {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: JSONArray
+// Safe array builder
+// ============================================================================
+
+export type JSONArray {
+    fn new() -> JSONArray
+    fn push(value: any) -> JSONArray
+    fn build() -> array
+    fn to_string() -> string
+}
+
+// Create new array builder
+export fn JSONArray::new() -> JSONArray {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Schema Validation
+// ============================================================================
+
+export type Schema {
+    fn validate(obj: object) -> ValidationResult
+}
+
+// Create schema validator
+// Example: let schema = Schema::new({name: "string", age: "int"})
+export fn Schema::new(definition: object) -> Schema {
+    // Built-in implementation
+}
+
+export type ValidationResult {
+    valid: bool
+    errors: array  // Array of error messages
+}
+
+// ============================================================================
+// Example Usage
+// ============================================================================
+
+// let obj = parse('{"name":"John","age":30}')
+// print(obj.name)                          // "John"
+// print(obj.age)                           // 30
+//
+// let json_str = stringify({name: "John", age: 30})
+// print(json_str)                          // '{"name":"John","age":30}'
+//
+// let result = try_parse(possibly_invalid_json)
+// if result.is_ok() {
+//     let data = result.unwrap()
+// }
+//
+// let builder = JSONBuilder::new()
+// let json_obj = builder
+//     .add("name", "John")
+//     .add("age", 30)
+//     .add_array("skills", ["Rust", "ASTRIXA"])
+//     .build()
+//
+// let merged = merge({a: 1}, {b: 2})  // {a: 1, b: 2}
+// let name = get_path(obj, "user.profile.name")

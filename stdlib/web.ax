@@ -1,0 +1,356 @@
+// ============================================================================
+// ASTRIXA Standard Library - Web Module
+// Backend framework for building APIs and web services
+// Minimal, fast, productive
+// ============================================================================
+
+// ============================================================================
+// Server Creation
+// ============================================================================
+
+// Create HTTP server
+// Safe: Automatic connection management
+// Example: let server = Server::new()
+export fn Server::new() -> Server {
+    // Built-in implementation
+}
+
+// Create server with options
+// Example: let server = Server::with_options(options)
+export fn Server::with_options(options: ServerOptions) -> Server {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: Server
+// HTTP server with routing
+// ============================================================================
+
+export type Server {
+    // Route definition
+    fn get(path: string, handler: fn) -> Server
+    fn post(path: string, handler: fn) -> Server
+    fn put(path: string, handler: fn) -> Server
+    fn delete(path: string, handler: fn) -> Server
+    fn patch(path: string, handler: fn) -> Server
+    fn options(path: string, handler: fn) -> Server
+    fn route(method: string, path: string, handler: fn) -> Server
+    
+    // Middleware
+    fn use(middleware: fn) -> Server
+    fn use_router(router: Router) -> Server
+    
+    // Server control
+    fn listen(port: int)
+    fn listen_async(port: int) -> Task
+    fn stop()
+    fn is_running() -> bool
+    
+    // Configuration
+    fn set_timeout(seconds: int) -> Server
+    fn set_max_connections(count: int) -> Server
+    fn set_body_limit(bytes: int) -> Server
+    fn enable_cors(options: CORSOptions) -> Server
+    fn enable_compression() -> Server
+    fn set_error_handler(handler: fn) -> Server
+}
+
+// ============================================================================
+// Type: Request
+// Incoming HTTP request
+// ============================================================================
+
+export type Request {
+    method: string              // "GET", "POST", etc.
+    path: string               // Request path
+    query: map                 // Query parameters
+    headers: map               // Request headers
+    body: string               // Request body
+    cookies: map               // Cookies
+    
+    // Methods
+    fn json() -> object                  // Parse JSON body
+    fn form() -> map                     // Parse form data
+    fn param(name: string) -> string     // Path parameter
+    fn query_param(name: string) -> string
+    fn header(name: string) -> string
+    fn cookie(name: string) -> string
+    fn ip() -> string                   // Client IP
+    fn user_agent() -> string
+}
+
+// ============================================================================
+// Type: Response
+// HTTP response to send
+// ============================================================================
+
+export type Response {
+    fn json(data: object) -> Response   // Send JSON
+    fn text(data: string) -> Response   // Send text
+    fn html(data: string) -> Response   // Send HTML
+    fn binary(data: array) -> Response  // Send bytes
+    fn file(path: string) -> Response   // Send file
+    fn stream(data: Stream) -> Response // Stream response
+    
+    fn status(code: int) -> Response    // Set status code
+    fn header(name: string, value: string) -> Response
+    fn headers(map: map) -> Response
+    fn cookie(name: string, value: string) -> Response
+    fn set_cookie(cookie: Cookie) -> Response
+    fn redirect(url: string) -> Response
+    fn redirect_permanent(url: string) -> Response
+    
+    fn send()                           // Send response
+    fn is_sent() -> bool
+}
+
+// ============================================================================
+// Type: Router
+// Organize routes into groups
+// ============================================================================
+
+export type Router {
+    fn new() -> Router
+    fn get(path: string, handler: fn) -> Router
+    fn post(path: string, handler: fn) -> Router
+    fn put(path: string, handler: fn) -> Router
+    fn delete(path: string, handler: fn) -> Router
+    fn route(method: string, path: string, handler: fn) -> Router
+    fn use(middleware: fn) -> Router
+}
+
+// ============================================================================
+// Type: Middleware
+// Request/response processing
+// ============================================================================
+
+// Middleware function signature:
+// fn middleware(req: Request, res: Response, next: fn)
+
+// Logger middleware
+export fn logger_middleware() -> fn {
+    // Built-in implementation
+}
+
+// CORS middleware
+export fn cors_middleware(options: CORSOptions) -> fn {
+    // Built-in implementation
+}
+
+// Authentication middleware
+export fn auth_middleware(verify: fn) -> fn {
+    // Built-in implementation
+}
+
+// Rate limiting middleware
+export fn rate_limit_middleware(requests_per_second: int) -> fn {
+    // Built-in implementation
+}
+
+// JSON body parser middleware
+export fn json_parser_middleware(options: ParserOptions) -> fn {
+    // Built-in implementation
+}
+
+// Form data parser middleware
+export fn form_parser_middleware(options: ParserOptions) -> fn {
+    // Built-in implementation
+}
+
+// Session middleware
+export fn session_middleware(options: SessionOptions) -> fn {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: Cookie
+// HTTP cookie
+// ============================================================================
+
+export type Cookie {
+    name: string
+    value: string
+    max_age: int          // Seconds until expiration
+    expires: string       // ISO date string
+    domain: string
+    path: string
+    secure: bool          // HTTPS only
+    http_only: bool       // Not accessible from JS
+    same_site: string     // "Strict", "Lax", "None"
+}
+
+// ============================================================================
+// Type: Stream
+// Streaming response
+// ============================================================================
+
+export type Stream {
+    fn write(data: string)
+    fn write_bytes(data: array)
+    fn end()
+    fn pipe(source: Stream) -> Stream
+}
+
+// ============================================================================
+// Template Engine
+// ============================================================================
+
+// Render template file
+// Example: let html = render_template("templates/user.html", {name: "John"})
+export fn render_template(template_path: string, context: object) -> string {
+    // Built-in implementation
+}
+
+// Compile template
+// Example: let compiled = compile_template("<h1>{{title}}</h1>")
+export fn compile_template(template: string) -> Template {
+    // Built-in implementation
+}
+
+export type Template {
+    fn render(context: object) -> string
+}
+
+// ============================================================================
+// Static Files
+// ============================================================================
+
+// Serve static files
+// Example: server.use(static_files("./public"))
+export fn static_files(directory: string) -> fn {
+    // Built-in implementation
+}
+
+// Serve single file
+// Example: response.file("path/to/file.html")
+
+// ============================================================================
+// Type: WebSocketConnection
+// WebSocket for real-time communication
+// ============================================================================
+
+export type WebSocketConnection {
+    fn send(data: string)
+    fn send_json(data: object)
+    fn on_message(handler: fn)
+    fn on_close(handler: fn)
+    fn close()
+    fn is_connected() -> bool
+}
+
+// Upgrade connection to WebSocket
+// Example: ws = upgrade_to_websocket(req, res)
+export fn upgrade_to_websocket(req: Request, res: Response) -> WebSocketConnection {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Configuration Types
+// ============================================================================
+
+export type ServerOptions {
+    host: string           // Default: "127.0.0.1"
+    port: int             // Default: 3000
+    timeout: int          // Default: 30 seconds
+    max_connections: int  // Default: 1000
+    body_limit: int       // Default: 1MB
+}
+
+export type CORSOptions {
+    origins: array        // Allowed origins
+    methods: array        // Allowed methods
+    headers: array        // Allowed headers
+    allow_credentials: bool
+    max_age: int
+}
+
+export type ParserOptions {
+    limit: int            // Max body size
+    strict: bool          // Strict parsing
+}
+
+export type SessionOptions {
+    secret: string
+    max_age: int
+    secure: bool          // HTTPS only
+}
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+// Parse URL
+// Example: let parsed = parse_url("https://example.com/path?query=value")
+export fn parse_url(url: string) -> URLInfo {
+    // Built-in implementation
+}
+
+export type URLInfo {
+    protocol: string
+    host: string
+    path: string
+    query: string
+    hash: string
+}
+
+// Redirect helper
+export fn redirect_response(url: string) -> Response {
+    // Built-in implementation
+}
+
+// JSON error response
+export fn json_error(status: int, message: string) -> Response {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Example Usage
+// ============================================================================
+
+// Basic server:
+// let server = Server::new()
+// server.get("/", fn(req, res) {
+//     res.text("Hello, World!").send()
+// })
+// server.listen(3000)
+//
+// JSON API:
+// server.post("/api/users", fn(req, res) {
+//     let data = req.json()
+//     let user = create_user(data)
+//     res.status(201).json({id: user.id}).send()
+// })
+//
+// With middleware:
+// server.use(logger_middleware())
+// server.use(json_parser_middleware({}))
+// server.use(cors_middleware({
+//     origins: ["https://example.com"],
+//     methods: ["GET", "POST", "PUT", "DELETE"]
+// }))
+//
+// File serving:
+// server.use(static_files("./public"))
+// server.get("/download/:file", fn(req, res) {
+//     let filename = req.param("file")
+//     res.file("./downloads/" + filename).send()
+// })
+//
+// WebSocket:
+// server.get("/ws", fn(req, res) {
+//     let ws = upgrade_to_websocket(req, res)
+//     ws.on_message(fn(msg) {
+//         print("Received:", msg)
+//         ws.send("Echo: " + msg)
+//     })
+// })
+//
+// Router:
+// let api = Router::new()
+// api.get("/users", list_users)
+// api.get("/users/:id", get_user)
+// api.post("/users", create_user)
+// api.put("/users/:id", update_user)
+// api.delete("/users/:id", delete_user)
+// server.use_router(api)
+// server.listen(8080)
