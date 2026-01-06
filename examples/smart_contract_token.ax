@@ -1,0 +1,395 @@
+// ============================================================================
+// ASTRIXA Smart Contract Example - ERC20 Token
+// Demonstrates deterministic, gas-aware smart contract
+// ============================================================================
+
+// Contract: Simple ERC20-like token
+// Guarantees:
+//   - Deterministic execution
+//   - No re-entrancy
+//   - Gas-aware
+//   - Formal verification ready
+
+contract SimpleToken {
+    // State variables (stored on blockchain)
+    state: [
+        "name",
+        "symbol",
+        "decimals",
+        "total_supply",
+        "balances",          // Mapping: address -> balance
+        "allowances",        // Mapping: owner -> spender -> amount
+        "owner"
+    ]
+
+    // Initialize contract
+    fn initialize(token_name: string, token_symbol: string, initial_supply: U256) {
+        // Set token metadata
+        state["name"] = token_name;
+        state["symbol"] = token_symbol;
+        state["decimals"] = 18;
+        state["total_supply"] = initial_supply;
+        state["owner"] = msg.sender;
+        
+        // Give initial supply to creator
+        state["balances"][msg.sender] = initial_supply;
+        
+        emit("Transfer", {
+            from: "0x0",
+            to: msg.sender,
+            value: initial_supply
+        });
+    }
+
+    // Get token balance of address
+    fn balance_of(account: Address) -> U256 {
+        return state["balances"][account] or 0;
+    }
+
+    // Get total token supply
+    fn total_supply() -> U256 {
+        return state["total_supply"];
+    }
+
+    // Transfer tokens to another address
+    fn transfer(to: Address, amount: U256) -> bool {
+        // Validation
+        require(to != "0x0", "Cannot transfer to zero address");
+        require(amount > 0, "Amount must be positive");
+        
+        let sender_balance = state["balances"][msg.sender] or 0;
+        require(sender_balance >= amount, "Insufficient balance");
+        
+        // Update balances
+        state["balances"][msg.sender] = sender_balance - amount;
+        
+        let recipient_balance = state["balances"][to] or 0;
+        state["balances"][to] = recipient_balance + amount;
+        
+        // Emit event
+        emit("Transfer", {
+            from: msg.sender,
+            to: to,
+            value: amount
+        });
+        
+        return true;
+    }
+
+    // Approve spender to spend tokens on behalf of owner
+    fn approve(spender: Address, amount: U256) -> bool {
+        require(spender != "0x0", "Cannot approve zero address");
+        
+        // Set allowance
+        if !state["allowances"][msg.sender] {
+            state["allowances"][msg.sender] = {};
+        }
+        state["allowances"][msg.sender][spender] = amount;
+        
+        emit("Approval", {
+            owner: msg.sender,
+            spender: spender,
+            value: amount
+        });
+        
+        return true;
+    }
+
+    // Get allowance for spender
+    fn allowance(owner: Address, spender: Address) -> U256 {
+        if state["allowances"][owner] {
+            return state["allowances"][owner][spender] or 0;
+        }
+        return 0;
+    }
+
+    // Transfer from another address (using allowance)
+    fn transfer_from(from: Address, to: Address, amount: U256) -> bool {
+        require(to != "0x0", "Cannot transfer to zero address");
+        require(amount > 0, "Amount must be positive");
+        
+        // Check allowance
+        let allowed = allowance(from, msg.sender);
+        require(allowed >= amount, "Insufficient allowance");
+        
+        // Check balance
+        let from_balance = state["balances"][from] or 0;
+        require(from_balance >= amount, "Insufficient balance");
+        
+        // Update balances
+        state["balances"][from] = from_balance - amount;
+        
+        let to_balance = state["balances"][to] or 0;
+        state["balances"][to] = to_balance + amount;
+        
+        // Update allowance
+        state["allowances"][from][msg.sender] = allowed - amount;
+        
+        emit("Transfer", {
+            from: from,
+            to: to,
+            value: amount
+        });
+        
+        return true;
+    }
+
+    // Mint new tokens (owner only)
+    fn mint(to: Address, amount: U256) {
+        require(msg.sender == state["owner"], "Only owner can mint");
+        require(to != "0x0", "Cannot mint to zero address");
+        require(amount > 0, "Amount must be positive");
+        
+        // Increase total supply
+        state["total_supply"] = state["total_supply"] + amount;
+        
+        // Increase recipient balance
+        let to_balance = state["balances"][to] or 0;
+        state["balances"][to] = to_balance + amount;
+        
+        emit("Transfer", {
+            from: "0x0",
+            to: to,
+            value: amount
+        });
+    }
+
+    // Burn tokens
+    fn burn(amount: U256) {
+        require(amount > 0, "Amount must be positive");
+        
+        let sender_balance = state["balances"][msg.sender] or 0;
+        require(sender_balance >= amount, "Insufficient balance");
+        
+        // Decrease balance
+        state["balances"][msg.sender] = sender_balance - amount;
+        
+        // Decrease total supply
+        state["total_supply"] = state["total_supply"] - amount;
+        
+        emit("Transfer", {
+            from: msg.sender,
+            to: "0x0",
+            value: amount
+        });
+    }
+}
+
+// ============================================================================
+// Advanced Contract: DEX Automated Market Maker (AMM)
+// ============================================================================
+
+contract SimpleAMM {
+    state: [
+        "token_a",
+        "token_b",
+        "reserve_a",
+        "reserve_b",
+        "total_liquidity",
+        "liquidity_providers",    // address -> liquidity
+        "fee_percent"
+    ]
+
+    fn initialize(token_a_addr: Address, token_b_addr: Address) {
+        state["token_a"] = token_a_addr;
+        state["token_b"] = token_b_addr;
+        state["reserve_a"] = 0;
+        state["reserve_b"] = 0;
+        state["total_liquidity"] = 0;
+        state["fee_percent"] = 30;  // 0.3% fee (30 basis points)
+    }
+
+    // Add liquidity to pool
+    fn add_liquidity(amount_a: U256, amount_b: U256) -> U256 {
+        require(amount_a > 0 && amount_b > 0, "Amounts must be positive");
+        
+        let reserve_a = state["reserve_a"];
+        let reserve_b = state["reserve_b"];
+        let total_liquidity = state["total_liquidity"];
+        
+        let liquidity_minted;
+        
+        if total_liquidity == 0 {
+            // First liquidity provider
+            liquidity_minted = sqrt(amount_a * amount_b);
+        } else {
+            // Proportional to existing pool
+            let liquidity_a = (amount_a * total_liquidity) / reserve_a;
+            let liquidity_b = (amount_b * total_liquidity) / reserve_b;
+            liquidity_minted = min(liquidity_a, liquidity_b);
+        }
+        
+        // Update reserves
+        state["reserve_a"] = reserve_a + amount_a;
+        state["reserve_b"] = reserve_b + amount_b;
+        state["total_liquidity"] = total_liquidity + liquidity_minted;
+        
+        // Update provider balance
+        let provider_liquidity = state["liquidity_providers"][msg.sender] or 0;
+        state["liquidity_providers"][msg.sender] = provider_liquidity + liquidity_minted;
+        
+        emit("LiquidityAdded", {
+            provider: msg.sender,
+            amount_a: amount_a,
+            amount_b: amount_b,
+            liquidity: liquidity_minted
+        });
+        
+        return liquidity_minted;
+    }
+
+    // Swap token A for token B
+    fn swap_a_for_b(amount_in: U256) -> U256 {
+        require(amount_in > 0, "Amount must be positive");
+        
+        let reserve_a = state["reserve_a"];
+        let reserve_b = state["reserve_b"];
+        
+        // Calculate output with fee
+        let amount_in_with_fee = amount_in * (10000 - state["fee_percent"]);
+        let numerator = amount_in_with_fee * reserve_b;
+        let denominator = (reserve_a * 10000) + amount_in_with_fee;
+        let amount_out = numerator / denominator;
+        
+        require(amount_out > 0, "Insufficient output amount");
+        require(amount_out < reserve_b, "Insufficient liquidity");
+        
+        // Update reserves
+        state["reserve_a"] = reserve_a + amount_in;
+        state["reserve_b"] = reserve_b - amount_out;
+        
+        emit("Swap", {
+            user: msg.sender,
+            token_in: state["token_a"],
+            token_out: state["token_b"],
+            amount_in: amount_in,
+            amount_out: amount_out
+        });
+        
+        return amount_out;
+    }
+
+    // Get current price (amount of B per unit of A)
+    fn get_price() -> U256 {
+        let reserve_a = state["reserve_a"];
+        let reserve_b = state["reserve_b"];
+        
+        require(reserve_a > 0, "Pool not initialized");
+        
+        return (reserve_b * 1e18) / reserve_a;
+    }
+}
+
+// ============================================================================
+// AI + Smart Contract: Content Moderation DAO
+// ============================================================================
+
+contract ContentModerationDAO {
+    state: [
+        "moderators",
+        "content_submissions",
+        "moderation_threshold",
+        "ai_model"
+    ]
+
+    fn initialize() {
+        state["moderators"] = {};
+        state["content_submissions"] = {};
+        state["moderation_threshold"] = 70;  // 70% confidence
+        state["ai_model"] = "sentiment";
+    }
+
+    // Submit content for moderation
+    fn submit_content(content: string) -> U256 {
+        // Run AI sentiment analysis
+        let sentiment = ai.infer(ai.model(state["ai_model"]), content);
+        
+        let content_id = generate_id();
+        
+        state["content_submissions"][content_id] = {
+            content: content,
+            submitter: msg.sender,
+            sentiment: sentiment,
+            approved: false,
+            timestamp: tx.timestamp
+        };
+        
+        // Auto-approve if passes threshold
+        if sentiment.label == "positive" && sentiment.score > state["moderation_threshold"] / 100.0 {
+            state["content_submissions"][content_id]["approved"] = true;
+            
+            emit("ContentApproved", {
+                id: content_id,
+                submitter: msg.sender,
+                auto: true
+            });
+        } else if sentiment.label == "negative" && sentiment.score > 0.8 {
+            // Auto-reject toxic content
+            emit("ContentRejected", {
+                id: content_id,
+                reason: "Toxic content detected",
+                auto: true
+            });
+        } else {
+            // Needs human review
+            emit("ContentPendingReview", {
+                id: content_id,
+                sentiment: sentiment
+            });
+        }
+        
+        return content_id;
+    }
+
+    // Moderator votes on content
+    fn vote(content_id: U256, approve: bool) {
+        require(state["moderators"][msg.sender], "Not a moderator");
+        
+        let submission = state["content_submissions"][content_id];
+        require(submission, "Content not found");
+        
+        submission["approved"] = approve;
+        
+        emit("ContentModerated", {
+            id: content_id,
+            moderator: msg.sender,
+            approved: approve
+        });
+    }
+}
+
+// ============================================================================
+// Smart Contract Restrictions (IMPORTANT)
+// ============================================================================
+
+// In contract mode, the following are RESTRICTED:
+// ❌ Dynamic memory allocation
+// ❌ File system access (read, write)
+// ❌ Network access (http_get, http_post)
+// ❌ Non-deterministic operations (random)
+// ❌ Floating point (use fixed-point U256 instead)
+// ❌ Unbounded loops (must have gas limits)
+
+// ✅ ALLOWED in contracts:
+// ✅ Pure deterministic logic
+// ✅ State variables
+// ✅ msg.sender, tx.timestamp, chain.id
+// ✅ require() for validation
+// ✅ emit() for events
+// ✅ AI operations (deterministic)
+// ✅ Crypto operations (sha256, sign, verify)
+// ✅ Math operations
+// ✅ U256 arithmetic
+
+// ============================================================================
+// Compilation Commands
+// ============================================================================
+
+// Compile to EVM bytecode:
+//   astrixa build --target=contract --output=bytecode simple_token.ax
+
+// Deploy contract:
+//   astrixa deploy simple_token.ax --network=sepolia --wallet=wallet.json
+
+// Verify contract:
+//   astrixa verify simple_token.ax --address=0x... --network=mainnet

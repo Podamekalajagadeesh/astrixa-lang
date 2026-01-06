@@ -1,0 +1,499 @@
+// ============================================================================
+// ASTRIXA Standard Library - Web3 Module
+// Native Web3 support - no SDK chaos
+// EVM-first, expandable to Solana/Move/Cosmos
+// ============================================================================
+
+// ============================================================================
+// Wallet Management
+// ============================================================================
+
+// Create wallet from private key
+// Safe: Validates key format
+// Example: let wallet = web3.wallet.fromPrivateKey("0x...")
+export fn wallet::fromPrivateKey(key: string) -> Wallet {
+    // Built-in implementation
+}
+
+// Generate new random wallet
+// Safe: Cryptographically secure randomness
+// Example: let wallet = web3.wallet.generate()
+export fn wallet::generate() -> Wallet {
+    // Built-in implementation
+}
+
+// Create wallet from mnemonic phrase
+// Example: let wallet = web3.wallet.fromMnemonic("word1 word2...")
+export fn wallet::fromMnemonic(phrase: string, index: int) -> Wallet {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: Wallet
+// Blockchain wallet with signing capability
+// ============================================================================
+
+export type Wallet {
+    address: Address            // Public address
+    private_key: string         // Private key (secure)
+    public_key: string          // Public key
+    
+    // Methods
+    fn sign(message: string) -> Signature
+    fn sign_transaction(tx: Transaction) -> Signature
+    fn derive(index: int) -> Wallet        // HD derivation
+    fn to_json() -> string
+}
+
+// ============================================================================
+// Ethereum / EVM Operations
+// ============================================================================
+
+// Get ETH balance
+// Example: let balance = web3.eth.balance(address)
+export fn eth::balance(address: Address) -> U256 {
+    // Built-in implementation
+}
+
+// Get balance at specific block
+// Example: let balance = web3.eth.balance_at(address, block_number)
+export fn eth::balance_at(address: Address, block: int) -> U256 {
+    // Built-in implementation
+}
+
+// Get transaction count (nonce)
+// Example: let nonce = web3.eth.transaction_count(address)
+export fn eth::transaction_count(address: Address) -> int {
+    // Built-in implementation
+}
+
+// Send ETH transaction
+// Example: let tx_hash = web3.eth.send(tx_params)
+export fn eth::send(params: TransactionParams) -> string {
+    // Built-in implementation
+}
+
+// Send signed transaction
+// Example: let tx_hash = web3.eth.send_signed(signed_tx)
+export fn eth::send_signed(signed_tx: string) -> string {
+    // Built-in implementation
+}
+
+// Get transaction by hash
+// Example: let tx = web3.eth.transaction(hash)
+export fn eth::transaction(hash: string) -> Transaction {
+    // Built-in implementation
+}
+
+// Get transaction receipt
+// Example: let receipt = web3.eth.receipt(hash)
+export fn eth::receipt(hash: string) -> TransactionReceipt {
+    // Built-in implementation
+}
+
+// Wait for transaction confirmation
+// Example: let receipt = web3.eth.wait(hash, confirmations: 3)
+export fn eth::wait(hash: string, confirmations: int) -> TransactionReceipt {
+    // Built-in implementation
+}
+
+// Get current block number
+// Example: let block_num = web3.eth.block_number()
+export fn eth::block_number() -> int {
+    // Built-in implementation
+}
+
+// Get block by number or hash
+// Example: let block = web3.eth.block(12345)
+export fn eth::block(identifier: int | string) -> Block {
+    // Built-in implementation
+}
+
+// Get gas price
+// Example: let gas_price = web3.eth.gas_price()
+export fn eth::gas_price() -> U256 {
+    // Built-in implementation
+}
+
+// Estimate gas for transaction
+// Example: let gas = web3.eth.estimate_gas(tx_params)
+export fn eth::estimate_gas(params: TransactionParams) -> int {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Smart Contract Interaction
+// ============================================================================
+
+// Create contract interface
+// Example: let contract = web3.contract(address, abi)
+export fn contract(address: Address, abi: string | object) -> Contract {
+    // Built-in implementation
+}
+
+// Deploy contract
+// Example: let addr = web3.deploy(bytecode, args, wallet)
+export fn deploy(bytecode: string, constructor_args: array, from: Wallet) -> Address {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Type: Contract
+// Smart contract interface
+// ============================================================================
+
+export type Contract {
+    address: Address
+    abi: object
+    
+    // Call read-only method (no gas)
+    fn call(method: string, args: array) -> any
+    
+    // Send transaction (costs gas)
+    fn send(method: string, args: array, options: CallOptions) -> string
+    
+    // Estimate gas for method
+    fn estimate_gas(method: string, args: array) -> int
+    
+    // Listen to events
+    fn on(event: string, callback: fn)
+    fn once(event: string, callback: fn)
+    fn off(event: string)
+    
+    // Get past events
+    fn events(event: string, from_block: int, to_block: int) -> array
+}
+
+// ============================================================================
+// Type: Transaction
+// Blockchain transaction
+// ============================================================================
+
+export type Transaction {
+    hash: string
+    from: Address
+    to: Address
+    value: U256
+    gas: int
+    gas_price: U256
+    nonce: int
+    data: string
+    block_number: int
+    block_hash: string
+    transaction_index: int
+}
+
+// ============================================================================
+// Type: TransactionReceipt
+// Transaction execution result
+// ============================================================================
+
+export type TransactionReceipt {
+    transaction_hash: string
+    block_number: int
+    block_hash: string
+    from: Address
+    to: Address
+    gas_used: int
+    cumulative_gas_used: int
+    contract_address: Address | null
+    status: bool                // true = success, false = failed
+    logs: array                 // Event logs
+}
+
+// ============================================================================
+// Type: Block
+// Blockchain block
+// ============================================================================
+
+export type Block {
+    number: int
+    hash: string
+    parent_hash: string
+    timestamp: int
+    miner: Address
+    difficulty: U256
+    total_difficulty: U256
+    size: int
+    gas_limit: int
+    gas_used: int
+    transactions: array         // Transaction hashes
+    transaction_count: int
+}
+
+// ============================================================================
+// ENS (Ethereum Name Service)
+// ============================================================================
+
+// Resolve ENS name to address
+// Example: let addr = web3.ens.resolve("vitalik.eth")
+export fn ens::resolve(name: string) -> Address {
+    // Built-in implementation
+}
+
+// Reverse resolve address to ENS name
+// Example: let name = web3.ens.reverse(address)
+export fn ens::reverse(address: Address) -> string {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Utility Functions
+// ============================================================================
+
+// Convert Wei to Ether
+// Example: let eth = web3.utils.from_wei(wei_amount, "ether")
+export fn utils::from_wei(amount: U256, unit: string) -> float {
+    // Built-in implementation
+}
+
+// Convert Ether to Wei
+// Example: let wei = web3.utils.to_wei(1.5, "ether")
+export fn utils::to_wei(amount: float, unit: string) -> U256 {
+    // Built-in implementation
+}
+
+// Check if valid address
+// Example: if web3.utils.is_address(addr) { }
+export fn utils::is_address(value: string) -> bool {
+    // Built-in implementation
+}
+
+// Checksum address
+// Example: let checksummed = web3.utils.checksum_address(addr)
+export fn utils::checksum_address(address: string) -> Address {
+    // Built-in implementation
+}
+
+// Keccak256 hash (Ethereum standard)
+// Example: let hash = web3.utils.keccak256("data")
+export fn utils::keccak256(data: string | bytes) -> string {
+    // Built-in implementation
+}
+
+// Encode ABI parameters
+// Example: let encoded = web3.utils.encode_abi(types, values)
+export fn utils::encode_abi(types: array, values: array) -> string {
+    // Built-in implementation
+}
+
+// Decode ABI parameters
+// Example: let decoded = web3.utils.decode_abi(types, data)
+export fn utils::decode_abi(types: array, data: string) -> array {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Provider Configuration
+// ============================================================================
+
+// Set RPC provider
+// Example: web3.set_provider("https://mainnet.infura.io/v3/KEY")
+export fn set_provider(url: string) {
+    // Built-in implementation
+}
+
+// Set multiple providers for failover
+// Example: web3.set_providers(["url1", "url2", "url3"])
+export fn set_providers(urls: array) {
+    // Built-in implementation
+}
+
+// Get current provider
+// Example: let provider = web3.get_provider()
+export fn get_provider() -> string {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Network Detection
+// ============================================================================
+
+// Get network ID
+// Example: let network_id = web3.network_id()
+export fn network_id() -> int {
+    // Built-in implementation
+}
+
+// Get network type
+// Example: let network = web3.network()  // "mainnet", "sepolia", etc.
+export fn network() -> string {
+    // Built-in implementation
+}
+
+// Check if connected
+// Example: if web3.is_connected() { }
+export fn is_connected() -> bool {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Transaction Building
+// ============================================================================
+
+// Build transaction parameters
+// Safe: Auto-fills gas, nonce
+// Example:
+//   let tx = web3.transaction()
+//     .to(address)
+//     .value(web3.utils.to_wei(1.5, "ether"))
+//     .gas_limit(21000)
+//     .build()
+export fn transaction() -> TransactionBuilder {
+    // Built-in implementation
+}
+
+export type TransactionBuilder {
+    fn to(address: Address) -> TransactionBuilder
+    fn value(amount: U256) -> TransactionBuilder
+    fn data(bytes: string) -> TransactionBuilder
+    fn gas_limit(amount: int) -> TransactionBuilder
+    fn gas_price(price: U256) -> TransactionBuilder
+    fn nonce(n: int) -> TransactionBuilder
+    fn build() -> TransactionParams
+}
+
+// ============================================================================
+// Type: TransactionParams
+// Parameters for sending transaction
+// ============================================================================
+
+export type TransactionParams {
+    to: Address
+    value: U256                 // Amount to send
+    data: string                // Contract call data
+    gas: int | "auto"          // Gas limit
+    gas_price: U256 | "auto"   // Gas price
+    nonce: int | "auto"        // Transaction nonce
+}
+
+// ============================================================================
+// Type: CallOptions
+// Options for contract method calls
+// ============================================================================
+
+export type CallOptions {
+    from: Address
+    value: U256
+    gas: int
+    gas_price: U256
+}
+
+// ============================================================================
+// Event Listening
+// ============================================================================
+
+// Subscribe to new blocks
+// Example: web3.on_block(fn(block) { print(block.number) })
+export fn on_block(callback: fn) {
+    // Built-in implementation
+}
+
+// Subscribe to pending transactions
+// Example: web3.on_pending_transaction(fn(hash) { print(hash) })
+export fn on_pending_transaction(callback: fn) {
+    // Built-in implementation
+}
+
+// Subscribe to logs/events
+// Example: web3.on_logs(filter, fn(log) { print(log) })
+export fn on_logs(filter: LogFilter, callback: fn) {
+    // Built-in implementation
+}
+
+export type LogFilter {
+    address: Address | array    // Contract address(es)
+    topics: array               // Event topics
+    from_block: int | "latest"
+    to_block: int | "latest"
+}
+
+// ============================================================================
+// Batch Requests (Optimization)
+// ============================================================================
+
+// Execute multiple calls in one request
+// Example:
+//   let results = web3.batch([
+//     web3.eth.balance(addr1),
+//     web3.eth.balance(addr2),
+//     contract.call("totalSupply", [])
+//   ])
+export fn batch(requests: array) -> array {
+    // Built-in implementation
+}
+
+// ============================================================================
+// Future: Multi-Chain Support
+// ============================================================================
+
+// Solana support (future)
+// export fn solana::balance(address: PublicKey) -> int
+// export fn solana::send_sol(params: SolanaTransactionParams) -> string
+
+// Cosmos support (future)
+// export fn cosmos::balance(address: string, denom: string) -> int
+// export fn cosmos::send(params: CosmosTransactionParams) -> string
+
+// ============================================================================
+// Usage Examples
+// ============================================================================
+
+/*
+
+// Example 1: Check balance
+let wallet = web3.wallet.fromPrivateKey("0x...");
+let balance = web3.eth.balance(wallet.address);
+print("Balance:", web3.utils.from_wei(balance, "ether"), "ETH");
+
+// Example 2: Send ETH
+let tx_hash = web3.eth.send({
+    to: "0x123...",
+    value: web3.utils.to_wei(0.1, "ether"),
+    gas: "auto",
+    gas_price: "auto",
+    nonce: "auto"
+});
+let receipt = web3.eth.wait(tx_hash, 1);
+print("Transaction confirmed:", receipt.status);
+
+// Example 3: Contract interaction
+let contract = web3.contract(
+    "0xcontract...",
+    abi_json
+);
+
+// Read-only call (no gas)
+let total_supply = contract.call("totalSupply", []);
+
+// State-changing call (costs gas)
+let tx_hash = contract.send("transfer", [recipient, amount], {
+    from: wallet.address,
+    gas: 100000
+});
+
+// Listen to events
+contract.on("Transfer", fn(event) {
+    print("Transfer:", event.from, "->", event.to, event.value);
+});
+
+// Example 4: Deploy contract
+let contract_address = web3.deploy(
+    bytecode,
+    [constructor_arg1, constructor_arg2],
+    wallet
+);
+
+*/
+
+// ============================================================================
+// Security Best Practices
+// ============================================================================
+
+// ✅ Always validate addresses before sending
+// ✅ Use auto gas estimation for transactions
+// ✅ Wait for confirmations before considering final
+// ✅ Store private keys securely (never in code)
+// ✅ Use checksummed addresses
+// ✅ Handle transaction failures gracefully
+// ✅ Set reasonable gas limits to prevent stuck transactions

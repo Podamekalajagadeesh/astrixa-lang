@@ -9,6 +9,7 @@ pub struct Compiler {
     functions: HashMap<String, Vec<Instruction>>,
     contracts: HashMap<String, Contract>,
     locals: Vec<HashMap<String, usize>>,
+    mode: String,  // "native", "contract", "wasm", "web"
 }
 
 impl Compiler {
@@ -18,7 +19,16 @@ impl Compiler {
             functions: HashMap::new(),
             contracts: HashMap::new(),
             locals: vec![HashMap::new()],
+            mode: "native".to_string(),
         }
+    }
+    
+    pub fn set_mode(&mut self, mode: &str) {
+        self.mode = mode.to_string();
+    }
+    
+    pub fn get_mode(&self) -> &str {
+        &self.mode
     }
 
     pub fn compile(&mut self, program: Vec<Stmt>) -> Result<Vec<Instruction>, String> {

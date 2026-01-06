@@ -321,21 +321,67 @@ astrixa-lang/
 - [ ] Formal verification support
 - [ ] GPU-accelerated VM
 
+## Governance
+
+ASTRIXA is community-driven with clear processes for evolution:
+
+- **[Governance Model](GOVERNANCE.md)**: Three-phase evolution from BDFL to Foundation
+- **[RFC Process](rfcs/RFC_PROCESS.md)**: How language changes are proposed and decided
+- **[Roadmap](ROADMAP.md)**: Versioned milestones from v0.1 to v2.0+
+- **[Code of Conduct](CODE_OF_CONDUCT.md)**: Community standards and behavior
+
 ## Contributing
 
-This is an early-stage research project exploring the intersection of blockchain and AI.
+We welcome contributions! ASTRIXA is built by the community, for the community.
+
+**Get Started:**
+- Read [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
+- Check [ROADMAP.md](ROADMAP.md) for priorities
+- Browse [open issues](https://github.com/astrixa-lang/astrixa/issues)
+- Join our [Discord](#) for discussions
+
+**Ways to Contribute:**
+- 🐛 Report bugs and request features
+- 📝 Improve documentation
+- 💻 Submit code and fix issues
+- 🗳️ Participate in RFC discussions
+- 🎓 Help others in the community
+
+## Security
+
+Found a security vulnerability? Please report responsibly:
+- **Email**: security@astrixa.dev
+- **Do NOT** create public issues for security bugs
+- See [SECURITY.md](SECURITY.md) for full policy
 
 ## License
 
-MIT
+Apache 2.0 - See [LICENSE](LICENSE) for details.
+
+**This is open-source software, free to use and modify. Patent protection included.**
 
 ## Resources
 
-- **Ethereum JSON-RPC**: For blockchain context compatibility
-- **Solidity**: Inspiration for contract syntax
-- **Python**: Inspiration for clean syntax
-- **Lua**: Inspiration for VM design
+### Documentation
+- [START_HERE.md](START_HERE.md) - New user guide
+- [INDEX.md](INDEX.md) - Complete documentation index
+- [STDLIB_COMPLETE_REFERENCE.md](STDLIB_COMPLETE_REFERENCE.md) - Standard library
+- [PACKAGE_MANAGER.md](PACKAGE_MANAGER.md) - Package management
+- [LSP_INDEX.md](LSP_INDEX.md) - IDE support
+
+### Community
+- **Discord**: [Join](#) (coming soon)
+- **Forum**: [Discuss](#) (coming soon)
+- **Twitter**: [@astrixalang](#) (coming soon)
+- **GitHub**: [astrixa-lang/astrixa](https://github.com/astrixa-lang/astrixa)
+
+### Inspiration
+- **Ethereum JSON-RPC**: Blockchain context compatibility
+- **Solidity**: Contract syntax
+- **Python**: Clean syntax
+- **Rust**: Memory safety and tooling
+- **Lua**: VM design
 
 ---
 
-Built with ❤️ for the future of Web3 × AI
+Built with ❤️ by the ASTRIXA community for the future of Web3 × AI

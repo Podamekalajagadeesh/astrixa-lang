@@ -36,7 +36,11 @@
         "extensions": [
           ".ax"
         ],
-        "configuration": "./language-configuration.json"
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./icon.png",
+          "dark": "./icon.png"
+        }
       }
     ],
     "grammars": [
@@ -46,21 +50,51 @@
         "path": "./syntaxes/astrixa.tmLanguage.json"
       }
     ],
+    "commands": [
+      {
+        "command": "astrixa.restartServer",
+        "title": "Restart Language Server",
+        "category": "ASTRIXA"
+      },
+      {
+        "command": "astrixa.showOutput",
+        "title": "Show Output",
+        "category": "ASTRIXA"
+      }
+    ],
     "configuration": {
       "type": "object",
-      "title": "ASTRIXA",
+      "title": "ASTRIXA Language Configuration",
       "properties": {
         "astrixa.lsp.path": {
           "scope": "resource",
           "type": "string",
           "default": "astrixa-lsp",
-          "description": "Path to the astrixa-lsp binary"
+          "description": "Path to the astrixa-lsp binary. Can be absolute or relative path."
         },
         "astrixa.lsp.debug": {
           "scope": "resource",
           "type": "boolean",
           "default": false,
-          "description": "Enable LSP debug logging"
+          "description": "Enable LSP debug logging. Shows detailed logs in Output panel."
+        },
+        "astrixa.diagnostics.enable": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable real-time diagnostics and error checking."
+        },
+        "astrixa.completion.enable": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable intelligent code completion."
+        },
+        "astrixa.hover.enable": {
+          "scope": "resource",
+          "type": "boolean",
+          "default": true,
+          "description": "Enable hover documentation."
         }
       }
     }
