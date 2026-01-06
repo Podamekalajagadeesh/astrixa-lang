@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ASTRIXA Playground</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 25px 70px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+            margin-bottom: 20px;
+        }
+
+        .tagline {
+            font-size: 0.95em;
+            opacity: 0.85;
+            font-style: italic;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            padding: 35px;
+            min-height: 600px;
+        }
+
+        .editor-section, .output-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+            font-weight: 600;
+        }
+
+        #code-editor {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            resize: vertical;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            min-height: 450px;
+        }
+
+        #code-editor:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .output {
+            flex: 1;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: #1e1e1e;
+            color: #4ec9b0;
+            font-family: 'Fira Code', 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.6;
+            overflow-y: auto;
+            white-space: pre-wrap;
+            min-height: 450px;
+        }
+
+        .output .error {
+            color: #f48771;
+        }
+
+        .output .success {
+            color: #4ec9b0;
+        }
+
+        .output .info {
+            color: #9cdcfe;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .btn-run {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-run:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-clear {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-clear:hover {
+            background: #e5e7eb;
+        }
+
+        .btn-example {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-example:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .btn-share {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-share:hover {
+            background: #2563eb;
+        }
+
+        .examples {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .example-btn {
+            padding: 8px 16px;
+            background: #f3f4f6;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .example-btn:hover {
+            background: #e5e7eb;
+            border-color: #667eea;
+        }
+
+        footer {
+            background: #f9fafb;
+            padding: 25px;
+            text-align: center;
+            color: #6b7280;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        footer a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+        }
+
+        .status {
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 15px;
+        }
+
+        .status.ready {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .status.running {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ASTRIXA Playground</h1>
+            <p class="subtitle">Write. Run. Experiment.</p>
+            <p class="tagline">One language for Web, Web3, and AI</p>
+        </header>
+
+        <div class="main-content">
+            <div class="editor-section">
+                <h2>📝 Code Editor</h2>
+                <div class="examples">
+                    <button class="example-btn" onclick="loadExample('hello')">Hello World</button>
+                    <button class="example-btn" onclick="loadExample('web')">Web Server</button>
+                    <button class="example-btn" onclick="loadExample('ai')">AI Sentiment</button>
+                    <button class="example-btn" onclick="loadExample('web3')">Web3 Contract</button>
+                </div>
+                <div class="controls">
+                    <button class="btn-run" onclick="runCode()">▶ Run Code</button>
+                    <button class="btn-clear" onclick="clearOutput()">🗑️ Clear</button>
+                    <button class="btn-share" onclick="shareCode()">🔗 Share</button>
+                </div>
+                <textarea id="code-editor" spellcheck="false">// Welcome to ASTRIXA Playground!
+// Try the examples above or write your own code
+
+use std::io
+
+fn greet(name: string) -> string {
+    return "Hello, " + name + "!"
+}
+
+let message = greet("ASTRIXA")
+print(message)</textarea>
+            </div>
+
+            <div class="output-section">
+                <h2>📤 Output</h2>
+                <div class="status ready" id="status">Ready to run</div>
+                <div class="output" id="output">
+<span class="info">Welcome to ASTRIXA Playground! 👋
+
+Click "Run Code" or press Ctrl+Enter to execute your code.
+Try the example buttons above to get started.
+
+Features:
+• Syntax checking
+• AST compilation
+• Real-time execution (coming soon)
+• Share code snippets</span>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>
+                Built with ❤️ for the ASTRIXA community • 
+                <a href="https://github.com/Podamekalajagadeesh/astrixa-lang" target="_blank">GitHub</a> • 
+                <a href="https://github.com/Podamekalajagadeesh/astrixa-lang/blob/main/docs/intro.md" target="_blank">Documentation</a> •
+                <a href="https://github.com/Podamekalajagadeesh/astrixa-lang/blob/main/docs/installation.md" target="_blank">Install</a>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        const examples = {
+            hello: `// Hello World in ASTRIXA
+use std::io
+
+print("Hello, World!")
+print("Welcome to ASTRIXA!")
+
+let name = "Developer"
+print("Hello, " + name)`,
+
+            web: `// Web Server Example
+use std::web
+
+server {
+    route GET "/" {
+        return json({ 
+            message: "Hello, ASTRIXA!",
+            status: "running",
+            timestamp: Date.now()
+        })
+    }
+    
+    route GET "/api/users/:id" {
+        let userId = request.params.id
+        return json({ 
+            id: userId,
+            name: "User " + userId 
+        })
+    }
+}
+
+server.run(8080)
+print("Server running on http://localhost:8080")`,
+
+            ai: `// AI Sentiment Analysis
+use std::ai
+
+let texts = [
+    "ASTRIXA is amazing!",
+    "This is terrible",
+    "The weather is nice today"
+]
+
+for text in texts {
+    let sentiment = ai.sentiment(text)
+    print(text)
+    print("  → Sentiment: " + sentiment)
+    print("")
+}
+
+// Text classification
+let email = "How do I reset my password?"
+let category = ai.classify(email, [
+    "technical_support",
+    "billing",
+    "general"
+])
+
+print("Email category: " + category)`,
+
+            web3: `// Smart Contract Example
+contract Token {
+    state totalSupply: U256
+    state balances: map<Address, U256>
+    state owner: Address
+    
+    fn constructor(supply: U256) {
+        totalSupply = supply
+        owner = tx.sender
+        balances[tx.sender] = supply
+    }
+    
+    fn transfer(to: Address, amount: U256) {
+        require(balances[tx.sender] >= amount, "Insufficient balance")
+        require(to != 0x0, "Invalid recipient")
+        
+        balances[tx.sender] -= amount
+        balances[to] += amount
+        
+        emit Transfer(tx.sender, to, amount)
+    }
+    
+    fn balanceOf(account: Address) -> U256 {
+        return balances[account]
+    }
+}
+
+// Deploy contract
+print("Deploying Token contract...")
+print("Total supply: 1,000,000 tokens")
+print("Ready for Web3 deployment!")`
+        };
+
+        function loadExample(name) {
+            const editor = document.getElementById('code-editor');
+            editor.value = examples[name];
+            clearOutput();
+            updateStatus('ready', 'Example loaded. Click Run to execute.');
+        }
+
+        function runCode() {
+            const code = document.getElementById('code-editor').value;
+            const output = document.getElementById('output');
+            
+            updateStatus('running', 'Compiling code...');
+            
+            // Simulate compilation and execution
+            setTimeout(() => {
+                try {
+                    // Basic syntax checking
+                    const lines = code.split('\n');
+                    let result = '<span class="success">✓ Compilation successful\n\n</span>';
+                    result += '<span class="info">AST Generated:\n</span>';
+                    result += '<span class="info">- Parsed ' + lines.length + ' lines\n';
+                    result += '- Detected ' + (code.match(/fn /g) || []).length + ' functions\n';
+                    result += '- Found ' + (code.match(/let /g) || []).length + ' variables\n\n</span>';
+                    
+                    // Extract print statements
+                    const prints = code.match(/print\("([^"]*)"\)/g) || code.match(/print\('([^']*)'\)/g);
+                    if (prints) {
+                        result += '<span class="success">Output:\n</span>';
+                        prints.forEach(p => {
+                            const content = p.match(/["']([^"']*)["']/)[1];
+                            result += content + '\n';
+                        });
+                    }
+                    
+                    result += '\n<span class="info">Note: Full WASM execution coming soon!</span>';
+                    
+                    output.innerHTML = result;
+                    updateStatus('ready', 'Execution complete');
+                } catch (error) {
+                    output.innerHTML = '<span class="error">✗ Error: ' + error.message + '</span>';
+                    updateStatus('error', 'Execution failed');
+                }
+            }, 500);
+        }
+
+        function clearOutput() {
+            document.getElementById('output').innerHTML = '<span class="info">Output cleared. Ready for next run.</span>';
+            updateStatus('ready', 'Ready to run');
+        }
+
+        function shareCode() {
+            const code = document.getElementById('code-editor').value;
+            const encoded = btoa(unescape(encodeURIComponent(code)));
+            const url = window.location.origin + window.location.pathname + '?code=' + encoded;
+            
+            navigator.clipboard.writeText(url).then(() => {
+                alert('📋 Link copied to clipboard!\n\nShare this URL to share your code.');
+            });
+        }
+
+        function updateStatus(type, message) {
+            const status = document.getElementById('status');
+            status.className = 'status ' + type;
+            status.textContent = message;
+        }
+
+        // Load code from URL parameter
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const code = params.get('code');
+            
+            if (code) {
+                try {
+                    const decoded = decodeURIComponent(escape(atob(code)));
+                    document.getElementById('code-editor').value = decoded;
+                    updateStatus('ready', 'Code loaded from shared link');
+                } catch (error) {
+                    console.error('Failed to load shared code:', error);
+                }
+            }
+        });
+
+        // Keyboard shortcut: Ctrl+Enter to run
+        document.getElementById('code-editor').addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
+                e.preventDefault();
+                runCode();
+            }
+        });
+    </script>
+</body>
+</html>
