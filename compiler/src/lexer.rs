@@ -1,32 +1,4 @@
-#[derive(Debug, Clone, PartialEq)]
-pub enum Token {
-    Fn,
-    Let,
-    If,
-    Else,
-    While,
-    Return,
-    Import,
-    Contract,
-    AI,
-    Identifier(String),
-    StringLiteral(String),
-    NumberLiteral(i64),
-    True,
-    False,
-    Assign,
-    Plus,
-    Less,
-    Greater,
-    LeftParen,
-    RightParen,
-    LeftBrace,
-    RightBrace,
-    LeftBracket,
-    RightBracket,
-    Comma,
-    Dot,
-}
+use crate::token::Token;
 
 pub struct Lexer {
     input: Vec<char>,
@@ -34,151 +6,67 @@ pub struct Lexer {
 }
 
 impl Lexer {
-    pub fn new(source: &str) -> Self {
-        Lexer {
-            input: source.chars().collect(),
+    pub fn new(input: &str) -> Self {
+        Self {
+            input: input.chars().collect(),
             position: 0,
         }
     }
 
-    fn current_char(&self) -> Option<char> {
-        self.input.get(self.position).cloned()
+    pub fn next_token(&mut self) -> Token {
+        self.skip_whitespace();
+
+        if self.position >= self.input.len() {
+            return Token::EOF;
+        }
+
+        let ch = self.input[self.position];
+
+        match ch {
+            '(' => self.simple(Token::LParen),
+            ')' => self.simple(Token::RParen),
+            '{' => self.simple(Token::LBrace),
+            '}' => self.simple(Token::RBrace),
+            '+' => self.simple(Token::Plus),
+            '-' => self.simple(Token::Minus),
+            '*' => self.simple(Token::Star),
+            '/' => self.simple(Token::Slash),
+            '=' => self.simple(Token::Equal),
+            ':' => self.simple(Token::Colon),
+            ',' => self.simple(Token::Comma),
+            _ => self.read_identifier(),
+        }
     }
 
-    fn advance(&mut self) {
+    fn simple(&mut self, tok: Token) -> Token {
         self.position += 1;
+        tok
     }
 
-    pub fn tokenize(&mut self) -> Vec<Token> {
-        let mut tokens = Vec::new();
-
-        while let Some(c) = self.current_char() {
-            match c {
-                ' ' | '\n' | '\t' | '\r' => {
-                    self.advance();
-                }
-                '(' => {
-                    tokens.push(Token::LeftParen);
-                    self.advance();
-                }
-                ')' => {
-                    tokens.push(Token::RightParen);
-                    self.advance();
-                }
-                '{' => {
-                    tokens.push(Token::LeftBrace);
-                    self.advance();
-                }
-                '}' => {
-                    tokens.push(Token::RightBrace);
-                    self.advance();
-                }
-                '[' => {
-                    tokens.push(Token::LeftBracket);
-                    self.advance();
-                }
-                ']' => {
-                    tokens.push(Token::RightBracket);
-                    self.advance();
-                }
-                ',' => {
-                    tokens.push(Token::Comma);
-                    self.advance();
-                }
-                '.' => {
-                    tokens.push(Token::Dot);
-                    self.advance();
-                }
-                '+' => {
-                    tokens.push(Token::Plus);
-                    self.advance();
-                }
-                '=' => {
-                    tokens.push(Token::Assign);
-                    self.advance();
-                }
-                '<' => {
-                    tokens.push(Token::Less);
-                    self.advance();
-                }
-                '>' => {
-                    tokens.push(Token::Greater);
-                    self.advance();
-                }
-                '"' => {
-                    tokens.push(self.read_string());
-                }
-                c if c.is_digit(10) => {
-                    tokens.push(self.read_number());
-                }
-                c if c.is_alphabetic() => {
-                    tokens.push(self.read_identifier());
-                }
-                _ => {
-                    self.advance(); // skip unknown for now
-                }
-            }
+    fn skip_whitespace(&mut self) {
+        while self.position < self.input.len()
+            && self.input[self.position].is_whitespace()
+        {
+            self.position += 1;
         }
-
-        tokens
-    }
-
-    fn read_string(&mut self) -> Token {
-        self.advance(); // skip opening quote
-        let mut value = String::new();
-
-        while let Some(c) = self.current_char() {
-            if c == '"' {
-                break;
-            }
-            value.push(c);
-            self.advance();
-        }
-
-        self.advance(); // skip closing quote
-        Token::StringLiteral(value)
     }
 
     fn read_identifier(&mut self) -> Token {
-        let mut value = String::new();
+        let start = self.position;
 
-        while let Some(c) = self.current_char() {
-            if c.is_alphanumeric() {
-                value.push(c);
-                self.advance();
-            } else {
-                break;
-            }
+        while self.position < self.input.len()
+            && self.input[self.position].is_alphanumeric()
+        {
+            self.position += 1;
         }
 
-        match value.as_str() {
+        let text: String = self.input[start..self.position].iter().collect();
+
+        match text.as_str() {
             "fn" => Token::Fn,
             "let" => Token::Let,
-            "if" => Token::If,
-            "else" => Token::Else,
-            "while" => Token::While,
             "return" => Token::Return,
-            "import" => Token::Import,
-            "contract" => Token::Contract,
-            "ai" => Token::AI,
-            "true" => Token::True,
-            "false" => Token::False,
-            _ => Token::Identifier(value),
+            _ => Token::Identifier(text),
         }
-    }
-
-    fn read_number(&mut self) -> Token {
-        let mut value = String::new();
-
-        while let Some(c) = self.current_char() {
-            if c.is_digit(10) {
-                value.push(c);
-                self.advance();
-            } else {
-                break;
-            }
-        }
-
-        Token::NumberLiteral(value.parse::<i64>().unwrap())
     }
 }
