@@ -1,6 +1,12 @@
-#[derive(Debug)]
+use crate::types::Type;
+
+#[derive(Debug, Clone)]
 pub enum Expr {
     Number(i64),
+    Float(f64),
+    Bool(bool),
+    String(String),
+    Text(String),
     Identifier(String),
 }
 
@@ -8,6 +14,7 @@ pub enum Expr {
 pub enum Stmt {
     Function {
         name: String,
+        return_type: Type,
         body: Vec<Stmt>,
     },
 }

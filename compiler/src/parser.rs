@@ -1,6 +1,7 @@
 use crate::ast::Stmt;
 use crate::lexer::Lexer;
 use crate::token::Token;
+use crate::types::Type;
 
 pub struct Parser {
     lexer: Lexer,
@@ -42,8 +43,12 @@ impl Parser {
 
         self.advance(); // consume name
 
+        // Default return type to Void for now
+        let return_type = Type::Void;
+
         Stmt::Function {
             name,
+            return_type,
             body: vec![],
         }
     }
