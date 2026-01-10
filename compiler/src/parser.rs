@@ -1,4 +1,5 @@
 use crate::ast::Stmt;
+use crate::error::CompileError;
 use crate::lexer::Lexer;
 use crate::token::Token;
 use crate::types::Type;
@@ -18,27 +19,35 @@ impl Parser {
         self.current = self.lexer.next_token();
     }
 
-    pub fn parse(&mut self) -> Vec<Stmt> {
+    pub fn parse(&mut self) -> Result<Vec<Stmt>, CompileError> {
         let mut stmts = Vec::new();
 
         while self.current != Token::EOF {
             if let Token::Fn = self.current {
-                stmts.push(self.parse_function());
+                stmts.push(self.parse_function()?);
             } else {
                 self.advance();
             }
         }
 
-        stmts
+        Ok(stmts)
     }
 
-    fn parse_function(&mut self) -> Stmt {
+    fn parse_function(&mut self) -> Result<Stmt, CompileError> {
         self.advance(); // consume fn
 
-        let name = if let Token::Identifier(name) = &self.current {
-            name.clone()
-        } else {
-            panic!("Expected function name");
+        let name = match &self.current {
+            Token::Identifier(name) => name.clone(),
+            _ => {
+                return Err(
+                    CompileError::new(
+                        "Expected function name",
+                        self.lexer.line,
+                        self.lexer.column,
+                    )
+                    .help("Function names must be valid identifiers"),
+                );
+            }
         };
 
         self.advance(); // consume name
@@ -46,10 +55,10 @@ impl Parser {
         // Default return type to Void for now
         let return_type = Type::Void;
 
-        Stmt::Function {
+        Ok(Stmt::Function {
             name,
             return_type,
             body: vec![],
-        }
+        })
     }
 }

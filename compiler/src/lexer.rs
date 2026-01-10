@@ -3,6 +3,8 @@ use crate::token::Token;
 pub struct Lexer {
     input: Vec<char>,
     position: usize,
+    pub line: usize,
+    pub column: usize,
 }
 
 impl Lexer {
@@ -10,6 +12,8 @@ impl Lexer {
         Self {
             input: input.chars().collect(),
             position: 0,
+            line: 1,
+            column: 1,
         }
     }
 
@@ -39,15 +43,27 @@ impl Lexer {
     }
 
     fn simple(&mut self, tok: Token) -> Token {
-        self.position += 1;
+        self.advance();
         tok
+    }
+
+    fn advance(&mut self) {
+        if self.position < self.input.len() {
+            if self.input[self.position] == '\n' {
+                self.line += 1;
+                self.column = 1;
+            } else {
+                self.column += 1;
+            }
+            self.position += 1;
+        }
     }
 
     fn skip_whitespace(&mut self) {
         while self.position < self.input.len()
             && self.input[self.position].is_whitespace()
         {
-            self.position += 1;
+            self.advance();
         }
     }
 
@@ -57,7 +73,7 @@ impl Lexer {
         while self.position < self.input.len()
             && self.input[self.position].is_alphanumeric()
         {
-            self.position += 1;
+            self.advance();
         }
 
         let text: String = self.input[start..self.position].iter().collect();
