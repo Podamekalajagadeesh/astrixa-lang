@@ -215,8 +215,10 @@
 - **[compiler/](compiler/)** - Compiler source code
   - `src/main.rs` - CLI entry point (MODIFIED - build command)
   - `src/compiler.rs` - Bytecode compiler (MODIFIED - multi-target)
-  - `src/lexer.rs` - Lexical analyzer
-  - `src/parser.rs` - Parser
+  - `src/lexer.rs` - Lexical analyzer (ENHANCED - line/column tracking)
+  - `src/parser.rs` - Parser (ENHANCED - Result-based errors)
+  - `src/error.rs` - Error type definition (NEW - Step 36)
+  - `src/diagnostics.rs` - Error pretty-printing (NEW - Step 36)
   - `src/ast.rs` - Abstract syntax tree
   - `src/interpreter.rs` - Interpreter
   - `src/vm.rs` - Virtual machine
@@ -225,6 +227,26 @@
   - `src/ai_runtime.rs` - AI runtime
   - `src/package_manager.rs` - Package manager
   - `src/wasm.rs` - WebAssembly support
+
+#### Step 36: Error Diagnostics (COMPLETE ✅)
+- **[STEP_36_COMPLETION_README.md](STEP_36_COMPLETION_README.md)** - **START HERE** - Overview and index
+- **[STEP_36_ERROR_DIAGNOSTICS_COMPLETE.md](STEP_36_ERROR_DIAGNOSTICS_COMPLETE.md)** - Full implementation guide
+- **[STEP_36_TRANSFORMATION_VISUAL.md](STEP_36_TRANSFORMATION_VISUAL.md)** - Before/after comparison
+- **[STEP_36_TESTING_GUIDE.md](STEP_36_TESTING_GUIDE.md)** - Testing strategies
+- **[STEP_36_DELIVERY_COMPLETE.md](STEP_36_DELIVERY_COMPLETE.md)** - Delivery summary
+- **[STEP_36_VISUAL_SUMMARY.md](STEP_36_VISUAL_SUMMARY.md)** - Visual showcase
+- **[STEP_36_QUICK_REFERENCE.md](STEP_36_QUICK_REFERENCE.md)** - Quick lookup guide
+- **[compiler/examples/error_demo.rs](compiler/examples/error_demo.rs)** - Live demo
+- **[test_step36_errors.sh](test_step36_errors.sh)** - Test script
+
+#### Step 37: Intermediate Representation (COMPLETE ✅)
+- **[STEP_37_SUMMARY.md](STEP_37_SUMMARY.md)** - **START HERE** - Complete summary
+- **[STEP_37_IR_COMPLETE.md](STEP_37_IR_COMPLETE.md)** - Full implementation guide
+- **[STEP_37_VISUAL_ARCHITECTURE.md](STEP_37_VISUAL_ARCHITECTURE.md)** - Visual architecture diagrams
+- **[STEP_37_QUICK_REFERENCE.md](STEP_37_QUICK_REFERENCE.md)** - Quick lookup guide
+- **[STEP_37_BANNER.md](STEP_37_BANNER.md)** - Visual banner
+- **[compiler/src/ir.rs](compiler/src/ir.rs)** - IR type definitions
+- **[compiler/src/lowering.rs](compiler/src/lowering.rs)** - AST to IR lowering
 
 ### Language Server
 - **[lsp/](lsp/)** - LSP implementation
@@ -443,6 +465,8 @@ ASTRIXA is the **FIRST programming language** with:
 | Manage packages | [PACKAGE_MANAGER_COMPLETE.md](PACKAGE_MANAGER_COMPLETE.md) |
 | See all stdlib functions | [STDLIB_COMPLETE_REFERENCE.md](STDLIB_COMPLETE_REFERENCE.md) |
 | Check implementation status | [COMPLETION_REPORT.md](COMPLETION_REPORT.md) |
+| Learn about error diagnostics | [STEP_36_ERROR_DIAGNOSTICS_COMPLETE.md](STEP_36_ERROR_DIAGNOSTICS_COMPLETE.md) |
+| Learn about IR | [STEP_37_SUMMARY.md](STEP_37_SUMMARY.md) |
 | Contribute to ASTRIXA | [CONTRIBUTING.md](CONTRIBUTING.md) |
 | Propose language changes | [rfcs/RFC_PROCESS.md](rfcs/RFC_PROCESS.md) |
 | Report security issue | [SECURITY.md](SECURITY.md) |

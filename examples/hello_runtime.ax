@@ -1,0 +1,6 @@
+// ASTRIXA Test - First Real Program with Runtime!
+// This demonstrates stdlib integration with the WASM runtime
+
+fn main {
+    println(42)
+}

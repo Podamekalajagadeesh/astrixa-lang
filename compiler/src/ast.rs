@@ -8,6 +8,7 @@ pub enum Expr {
     String(String),
     Text(String),
     Identifier(String),
+    Call(String, Vec<Expr>), // Function call: name, arguments
 }
 
 #[derive(Debug)]
@@ -17,4 +18,5 @@ pub enum Stmt {
         return_type: Type,
         body: Vec<Stmt>,
     },
+    Expression(Expr), // Expression statement
 }

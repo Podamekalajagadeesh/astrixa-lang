@@ -53,7 +53,149 @@ export fn delete(path: string) {
 export fn file_size(path: string) -> int {
     // Built-in implementation
 }
+BASIC OPTIMIZATIONS (MAKE ASTRIXA FAST)
+A language that is correct but slow ❌
+A language that is correct and optimized ✅
+All optimizations happen on IR — never on AST.
+🎯 STEP 38 GOAL
+Implement foundational optimizations that:
+Improve performance
+Reduce unnecessary instructions
+Prepare for WASM / native / contract targets
+We’ll start with 2 powerful optimizations:
+1️⃣ Constant Folding
+2️⃣ Dead Code Elimination (basic)
+These alone already beat many languages.
+🧠 1️⃣ CONSTANT FOLDING
+What it means (simple)
+This:
+Copy code
+Ax
+let x = 2 + 3
+Should become:
+Copy code
+Ax
+let x = 5
+👉 Do work at compile time, not runtime.
+🏗️ Update IR (small change)
+📄 compiler/src/ir.rs
+Copy code
+Rust
+#[derive(Debug, Clone)]
+pub enum IRInstr {
+        LoadConstInt(i64),
+            Add,
+                Return,
+}
+(We keep it minimal for now.)
+🛠️ Optimization Pass File
+📄 compiler/src/optimize.rs 👈 NEW
+Copy code
+Rust
+use crate::ir::IRInstr;
 
+pub fn optimize(instrs: Vec<IRInstr>) -> Vec<IRInstr> {
+        let mut stack: Vec<i64> = Vec::new();
+            let mut optimized = Vec::new();
+
+                for instr in instrs {
+                            match instr {
+                                            IRInstr::LoadConstInt(n) => {
+                                                                stack.push(n);
+                                            }
+                                                        IRInstr::Add => {
+                                                                            if let (Some(b), Some(a)) = (stack.pop(), stack.pop()) {
+                                                                                                    // Constant folding happens HERE
+                                                                                                                        stack.push(a + b);
+                                                                            } else {
+                                                                                                    optimized.push(IRInstr::Add);
+                                                                            }
+                                                        }
+                                                                    other => {
+                                                                                        optimized.push(other);
+                                                                    }
+                            }
+                }
+
+                    for val in stack {
+                                optimized.push(IRInstr::LoadConstInt(val));
+                    }
+
+                        optimized
+}
+💡 This is real compiler optimization logic.
+🧠 2️⃣ DEAD CODE ELIMINATION (BASIC)
+Example
+Copy code
+Ax
+fn test {
+        return
+            print("never runs")
+}
+Anything after return is dead.
+Simple rule (for now)
+Once Return is seen:
+Ignore all following instructions
+Add to optimizer
+📄 Update optimize.rs
+Copy code
+Rust
+pub fn remove_dead_code(instrs: Vec<IRInstr>) -> Vec<IRInstr> {
+        let mut result = Vec::new();
+
+            for instr in instrs {
+                        result.push(instr.clone());
+                                if matches!(instr, IRInstr::Return) {
+                                                break;
+                                }
+            }
+
+                result
+}
+🔗 Wire Optimizer into Pipeline
+📄 Update main.rs
+Copy code
+Rust
+mod optimize;
+After lowering:
+Copy code
+Rust
+let ir = lowering::lower(&ast);
+
+let mut final_ir = Vec::new();
+for func in ir {
+        let optimized = optimize::optimize(func.instructions);
+            let cleaned = optimize::remove_dead_code(optimized);
+                final_ir.push(cleaned);
+}
+
+println!("{:#?}", final_ir);
+🧠 WHAT STEP 38 ACHIEVES
+You now have: ✅ Compile-time computation
+✅ Faster runtime code
+✅ Smaller output
+✅ Optimization pipeline
+✅ Professional compiler structure
+This is not beginner-level anymore.
+🚨 IMPORTANT RULE (FOREVER)
+AST = correctness
+IR = performance
+Never mix them.
+}
+                                }
+            }
+}
+}
+                    }
+                                                                    }
+                                                                            }
+                                                                            }
+                                                        }
+                                            }
+                            }
+                }
+}
+}
 // List files in directory
 // Safe: Cannot traverse outside directory
 // Example: let files = list_dir("./data")
