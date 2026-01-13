@@ -1,0 +1,10 @@
+// STEP 49: Module test - main program
+// This program imports and uses the math module
+
+import test_step49_math
+
+fn main {
+    let result = test_step49_math.mul(6, 7)
+    print(result)
+    return result
+}

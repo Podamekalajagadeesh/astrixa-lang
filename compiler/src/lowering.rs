@@ -12,15 +12,59 @@
 
 use crate::ast::{Expr, Stmt};
 use crate::ir::{IRFunction, IRInstr, IRModule};
+use std::collections::HashMap;
+
+/// Context for lowering - tracks variables and their stack slots
+#[derive(Debug, Clone)]
+pub struct LowerCtx {
+    locals: HashMap<String, u32>,
+    next_slot: u32,
+}
+
+impl LowerCtx {
+    pub fn new() -> Self {
+        Self {
+            locals: HashMap::new(),
+            next_slot: 0,
+        }
+    }
+    
+    /// Allocate a new local variable slot
+    pub fn alloc(&mut self, name: String) -> u32 {
+        let slot = self.next_slot;
+        self.locals.insert(name, slot);
+        self.next_slot += 1;
+        slot
+    }
+    
+    /// Get the slot for a variable
+    pub fn get(&self, name: &str) -> Option<u32> {
+        self.locals.get(name).copied()
+    }
+    
+    /// Get the number of local slots used
+    pub fn num_locals(&self) -> u32 {
+        self.next_slot
+    }
+}
 
 /// Lower an AST into IR
 pub fn lower(stmts: &[Stmt]) -> IRModule {
     let mut module = IRModule::new();
 
     for stmt in stmts {
-        if let Stmt::Function { name, body, .. } = stmt {
-            let function = lower_function(name, body);
-            module.add_function(function);
+        match stmt {
+            Stmt::Import(_) => {
+                // Imports are handled at compilation level, not lowered to IR
+            }
+            Stmt::Function { name, params, body, exported, .. } => {
+                let function = lower_function(name, params, body);
+                module.add_function(function);
+                // Note: `exported` flag is tracked in AST but doesn't affect IR
+            }
+            _ => {
+                // Other statements not allowed at module level
+            }
         }
     }
 
@@ -28,12 +72,19 @@ pub fn lower(stmts: &[Stmt]) -> IRModule {
 }
 
 /// Lower a single function to IR
-fn lower_function(name: &str, body: &[Stmt]) -> IRFunction {
+fn lower_function(name: &str, params: &[String], body: &[Stmt]) -> IRFunction {
     let mut function = IRFunction::new(name.to_string());
+    let mut ctx = LowerCtx::new();
+    
+    // STEP 46: Allocate slots for parameters first
+    for param in params {
+        ctx.alloc(param.clone());
+    }
+    function.param_count = params.len();
     
     // Lower function body
     for stmt in body {
-        lower_statement(stmt, &mut function);
+        lower_statement(stmt, &mut function, &mut ctx);
     }
     
     // Ensure function ends with return
@@ -43,25 +94,129 @@ fn lower_function(name: &str, body: &[Stmt]) -> IRFunction {
         function.add_instruction(IRInstr::Return);
     }
     
+    // Store the number of locals in the function
+    function.local_count = ctx.num_locals() as usize;
+    
     function
 }
 
 /// Lower a single statement
-fn lower_statement(stmt: &Stmt, function: &mut IRFunction) {
+fn lower_statement(stmt: &Stmt, function: &mut IRFunction, ctx: &mut LowerCtx) {
     match stmt {
         Stmt::Expression(expr) => {
-            lower_expression(expr, function);
+            lower_expression(expr, function, ctx);
             // Pop the result if it's not used
             function.add_instruction(IRInstr::Pop);
         }
+        Stmt::Let { name, value } => {
+            // Allocate a new local variable slot
+            let slot = ctx.alloc(name.clone());
+            
+            // Lower the initializer expression
+            lower_expression(value, function, ctx);
+            
+            // Store to the local slot
+            function.add_instruction(IRInstr::StoreLocal(slot));
+        }
         Stmt::Function { .. } => {
             // Nested functions not supported yet
+        }
+        Stmt::If { condition, then_body, else_body } => {
+            // Lower the condition expression
+            lower_expression(condition, function, ctx);
+            
+            // Add JumpIfFalse - will patch the target later
+            let jump_if_false_index = function.instructions.len();
+            function.add_instruction(IRInstr::JumpIfFalse(0)); // placeholder
+            
+            // Lower then body
+            for stmt in then_body {
+                lower_statement(stmt, function, ctx);
+            }
+            
+            // Check if we have an else body
+            if let Some(else_body) = else_body {
+                // Add Jump to skip else body - will patch later
+                let jump_index = function.instructions.len();
+                function.add_instruction(IRInstr::Jump(0)); // placeholder
+                
+                // Patch JumpIfFalse to jump here (to else body)
+                let else_start = function.instructions.len();
+                if let IRInstr::JumpIfFalse(ref mut target) = &mut function.instructions[jump_if_false_index] {
+                    *target = else_start;
+                }
+                
+                // Lower else body
+                for stmt in else_body {
+                    lower_statement(stmt, function, ctx);
+                }
+                
+                // Patch Jump to jump here (after else body)
+                let end = function.instructions.len();
+                if let IRInstr::Jump(ref mut target) = &mut function.instructions[jump_index] {
+                    *target = end;
+                }
+            } else {
+                // No else body - JumpIfFalse jumps to after then body
+                let end = function.instructions.len();
+                if let IRInstr::JumpIfFalse(ref mut target) = &mut function.instructions[jump_if_false_index] {
+                    *target = end;
+                }
+            }
+        }
+        Stmt::Assign { name, value } => {
+            // Get the slot for the variable (must be already allocated)
+            if let Some(slot) = ctx.get(name) {
+                // Lower the right-hand side expression
+                lower_expression(value, function, ctx);
+                
+                // Store to the local slot
+                function.add_instruction(IRInstr::StoreLocal(slot));
+            }
+            // If variable not found, the type checker should have caught this
+        }
+        Stmt::While { condition, body } => {
+            // Mark the start of the loop
+            let loop_start = function.instructions.len();
+            
+            // Lower the condition expression
+            lower_expression(condition, function, ctx);
+            
+            // Add JumpIfFalse to exit the loop - will patch later
+            let jump_if_false_index = function.instructions.len();
+            function.add_instruction(IRInstr::JumpIfFalse(0)); // placeholder
+            
+            // Lower loop body
+            for stmt in body {
+                lower_statement(stmt, function, ctx);
+            }
+            
+            // Add Jump back to loop start
+            function.add_instruction(IRInstr::Jump(loop_start));
+            
+            // Patch JumpIfFalse to jump here (exit point)
+            let loop_end = function.instructions.len();
+            if let IRInstr::JumpIfFalse(ref mut target) = &mut function.instructions[jump_if_false_index] {
+                *target = loop_end;
+            }
+        }
+        Stmt::Return(expr) => {
+            // STEP 46: Lower return statement
+            lower_expression(expr, function, ctx);
+            function.add_instruction(IRInstr::Return);
+        }
+        Stmt::Panic(expr) => {
+            // STEP 48: Lower panic statement
+            // Evaluate the error message expression
+            lower_expression(expr, function, ctx);
+            // Emit panic instruction (message is on stack)
+            function.add_instruction(IRInstr::Panic);
         }
     }
 }
 
 /// Lower an expression
-fn lower_expression(expr: &Expr, function: &mut IRFunction) {
+fn lower_expression(expr: &Expr, function: &mut IRFunction, ctx: &LowerCtx) {
     match expr {
         Expr::Number(n) => {
             function.add_instruction(IRInstr::LoadConstInt(*n));
@@ -79,27 +234,122 @@ fn lower_expression(expr: &Expr, function: &mut IRFunction) {
             function.add_instruction(IRInstr::LoadConstString(t.clone()));
         }
         Expr::Identifier(name) => {
-            function.add_instruction(IRInstr::LoadVar(name.clone()));
+            // Check if it's a local variable first
+            if let Some(slot) = ctx.get(name) {
+                function.add_instruction(IRInstr::LoadLocal(slot));
+            } else {
+                // Fallback to named variable (for backward compatibility)
+                function.add_instruction(IRInstr::LoadVar(name.clone()));
+            }
         }
         Expr::Call(name, args) => {
             // Lower arguments first (left to right)
             for arg in args {
-                lower_expression(arg, function);
+                lower_expression(arg, function, ctx);
             }
             
+            // STEP 53: Check if this is a Web3 function
+            if is_web3_function(name) {
+                function.add_instruction(IRInstr::CallWeb3(name.clone()));
+            }
+            // STEP 52: Check if this is an AI function
+            else if is_ai_function(name) {
+                function.add_instruction(IRInstr::CallAI(name.clone()));
+            }
             // Check if this is a stdlib function
-            if is_stdlib_function(name) {
+            else if is_stdlib_function(name) {
                 function.add_instruction(IRInstr::CallStd(name.clone()));
             } else {
                 function.add_instruction(IRInstr::Call(name.clone(), args.len()));
             }
+        }
+        
+        // STEP 49: Module-qualified function call: module.function(args)
+        Expr::ModuleCall(module_name, func_name, args) => {
+            // Lower arguments first (left to right)
+            for arg in args {
+                lower_expression(arg, function, ctx);
+            }
+            
+            // Generate fully qualified function name: module.func
+            let qualified_name = format!("{}.{}", module_name, func_name);
+            function.add_instruction(IRInstr::Call(qualified_name, args.len()));
+        }
+        
+        // Binary arithmetic operators (STEP 43)
+        Expr::Add(left, right) => {
+            lower_expression(left, function, ctx);
+            lower_expression(right, function, ctx);
+            function.add_instruction(IRInstr::Add);
+        }
+        Expr::Sub(left, right) => {
+            lower_expression(left, function, ctx);
+            lower_expression(right, function, ctx);
+            function.add_instruction(IRInstr::Sub);
+        }
+        Expr::Mul(left, right) => {
+            lower_expression(left, function, ctx);
+            lower_expression(right, function, ctx);
+            function.add_instruction(IRInstr::Mul);
+        }
+        Expr::Div(left, right) => {
+            lower_expression(left, function, ctx);
+            lower_expression(right, function, ctx);
+            function.add_instruction(IRInstr::Div);
+        }
+        Expr::Mod(left, right) => {
+            lower_expression(left, function, ctx);
+            lower_expression(right, function, ctx);
+            function.add_instruction(IRInstr::Mod);
+        }
+        
+        // Binary comparison operators (STEP 43)
+        Expr::Eq(left, right) => {
+            lower_expression(left, function, ctx);
+            lower_expression(right, function, ctx);
+            function.add_instruction(IRInstr::Eq);
+        }
+        Expr::Ne(left, right) => {
+            lower_expression(left, function, ctx);
+            lower_expression(right, function, ctx);
+            function.add_instruction(IRInstr::Ne);
+        }
+        Expr::Lt(left, right) => {
+            lower_expression(left, function, ctx);
+            lower_expression(right, function, ctx);
+            function.add_instruction(IRInstr::Lt);
+        }
+        Expr::Le(left, right) => {
+            lower_expression(left, function, ctx);
+            lower_expression(right, function, ctx);
+            function.add_instruction(IRInstr::Le);
+        }
+        Expr::Gt(left, right) => {
+            lower_expression(left, function, ctx);
+            lower_expression(right, function, ctx);
+            function.add_instruction(IRInstr::Gt);
+        }
+        Expr::Ge(left, right) => {
+            lower_expression(left, function, ctx);
+            lower_expression(right, function, ctx);
+            function.add_instruction(IRInstr::Ge);
         }
     }
 }
 
 /// Check if a function is a standard library function
 fn is_stdlib_function(name: &str) -> bool {
-    matches!(name, "print" | "println")
+    crate::stdlib::is_stdlib(name)
+}
+
+/// Check if a function is an AI function (STEP 52)
+fn is_ai_function(name: &str) -> bool {
+    crate::stdlib::is_ai(name)
+}
+
+/// Check if a function is a Web3 function (STEP 53)
+fn is_web3_function(name: &str) -> bool {
+    crate::stdlib::is_web3(name)
 }
 
 #[cfg(test)]
@@ -111,16 +361,18 @@ mod tests {
     fn test_lower_empty_function() {
         let stmts = vec![Stmt::Function {
             name: "test".to_string(),
+            params: vec![],
             return_type: Type::Void,
             body: vec![],
+            exported: false,
         }];
         
         let module = lower(&stmts);
         assert_eq!(module.functions.len(), 1);
         assert_eq!(module.functions[0].name, "test");
-        assert_eq!(module.functions[0].instructions.len(), 1);
+        assert_eq!(module.functions[0].instructions.len(), 2); // LoadConstInt(0) + Return
         assert!(matches!(
-            module.functions[0].instructions[0],
+            module.functions[0].instructions[1],
             IRInstr::Return
         ));
     }
@@ -130,13 +382,17 @@ mod tests {
         let stmts = vec![
             Stmt::Function {
                 name: "foo".to_string(),
+                params: vec![],
                 return_type: Type::Void,
                 body: vec![],
+                exported: false,
             },
             Stmt::Function {
                 name: "bar".to_string(),
+                params: vec![],
                 return_type: Type::Void,
                 body: vec![],
+                exported: false,
             },
         ];
         

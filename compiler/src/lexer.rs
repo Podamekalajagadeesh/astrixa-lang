@@ -35,9 +35,15 @@ impl Lexer {
             '-' => self.simple(Token::Minus),
             '*' => self.simple(Token::Star),
             '/' => self.simple(Token::Slash),
-            '=' => self.simple(Token::Equal),
             ':' => self.simple(Token::Colon),
             ',' => self.simple(Token::Comma),
+            '.' => self.simple(Token::Dot),  // STEP 49: Module access
+            '=' => self.peek_two_char_op(),
+            '!' => self.peek_not_equal(),
+            '<' => self.peek_less(),
+            '>' => self.peek_greater(),
+            '"' => self.read_string(),
+            _ if ch.is_numeric() => self.read_number(),
             _ => self.read_identifier(),
         }
     }
@@ -71,7 +77,7 @@ impl Lexer {
         let start = self.position;
 
         while self.position < self.input.len()
-            && self.input[self.position].is_alphanumeric()
+            && (self.input[self.position].is_alphanumeric() || self.input[self.position] == '_')
         {
             self.advance();
         }
@@ -82,7 +88,101 @@ impl Lexer {
             "fn" => Token::Fn,
             "let" => Token::Let,
             "return" => Token::Return,
+            "if" => Token::If,
+            "else" => Token::Else,
+            "while" => Token::While,
+            "panic" => Token::Panic,  // STEP 48: Panic keyword
+            "import" => Token::Import, // STEP 49: Import keyword
+            "export" => Token::Export, // STEP 49: Export keyword
             _ => Token::Identifier(text),
         }
+    }
+
+    fn peek_two_char_op(&mut self) -> Token {
+        if self.position + 1 < self.input.len() && self.input[self.position + 1] == '=' {
+            self.advance();
+            self.advance();
+            Token::EqualEqual
+        } else {
+            self.simple(Token::Assign)
+        }
+    }
+
+    fn peek_not_equal(&mut self) -> Token {
+        if self.position + 1 < self.input.len() && self.input[self.position + 1] == '=' {
+            self.advance();
+            self.advance();
+            Token::NotEqual
+        } else {
+            self.advance();
+            Token::Identifier("!".to_string())
+        }
+    }
+
+    fn peek_less(&mut self) -> Token {
+        if self.position + 1 < self.input.len() && self.input[self.position + 1] == '=' {
+            self.advance();
+            self.advance();
+            Token::LessEqual
+        } else {
+            self.simple(Token::Less)
+        }
+    }
+
+    fn peek_greater(&mut self) -> Token {
+        if self.position + 1 < self.input.len() && self.input[self.position + 1] == '=' {
+            self.advance();
+            self.advance();
+            Token::GreaterEqual
+        } else {
+            self.simple(Token::Greater)
+        }
+    }
+
+    fn read_number(&mut self) -> Token {
+        let start = self.position;
+
+        while self.position < self.input.len() && self.input[self.position].is_numeric() {
+            self.advance();
+        }
+
+        let text: String = self.input[start..self.position].iter().collect();
+        
+        if let Ok(num) = text.parse::<i64>() {
+            Token::Number(num)
+        } else {
+            Token::Identifier(text)
+        }
+    }
+
+    fn read_string(&mut self) -> Token {
+        self.advance(); // consume opening quote
+        let mut result = String::new();
+
+        while self.position < self.input.len() && self.input[self.position] != '"' {
+            if self.input[self.position] == '\\' && self.position + 1 < self.input.len() {
+                self.advance();
+                match self.input[self.position] {
+                    'n' => result.push('\n'),
+                    'r' => result.push('\r'),
+                    't' => result.push('\t'),
+                    '\\' => result.push('\\'),
+                    '"' => result.push('"'),
+                    _ => {
+                        result.push('\\');
+                        result.push(self.input[self.position]);
+                    }
+                }
+            } else {
+                result.push(self.input[self.position]);
+            }
+            self.advance();
+        }
+
+        if self.position < self.input.len() && self.input[self.position] == '"' {
+            self.advance(); // consume closing quote
+        }
+
+        Token::String(result)
     }
 }

@@ -1,0 +1,42 @@
+// STEP 47: Standard Library Test
+// Tests all core stdlib functions
+
+fn main {
+    println("=== ASTRIXA STDLIB TEST ===")
+    println("")
+    
+    // Core I/O
+    println("--- Core I/O ---")
+    print("Hello ")
+    println("World!")
+    
+    // Math functions
+    println("")
+    println("--- Math Functions ---")
+    println("abs(-42):")
+    println(abs(-42))
+    
+    println("pow(2, 8):")
+    println(pow(2, 8))
+    
+    println("sqrt(144):")
+    println(sqrt(144))
+    
+    println("min(10, 20):")
+    println(min(10, 20))
+    
+    println("max(10, 20):")
+    println(max(10, 20))
+    
+    println("rand(100) (random 0-99):")
+    println(rand(100))
+    
+    // Time functions
+    println("")
+    println("--- Time Functions ---")
+    println("Current timestamp:")
+    println(time())
+    
+    println("")
+    println("=== ALL TESTS COMPLETE ===")
+}

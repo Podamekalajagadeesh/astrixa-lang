@@ -8,15 +8,17 @@ mod error;
 mod diagnostics;
 mod ir;
 mod lowering;
-mod optimize;
+mod opt;
 mod codegen;
+mod stdlib;
+mod loader;  // STEP 49: Module loader
 
 use lexer::Lexer;
 use parser::Parser;
 use typechecker::TypeChecker;
 use diagnostics::display_error;
 use lowering::lower;
-use optimize::optimize_module;
+use opt::optimize_module;
 use codegen::wasm;
 
 fn main() {
@@ -47,7 +49,7 @@ fn main() {
                     }
                     
                     // Optimization phase: Apply optimization passes
-                    let optimized_ir = optimize_module(ir);
+                    let optimized_ir = optimize_module(&ir);
                     println!("\n🚀 IR Module (after optimization):");
                     println!("  Functions: {}", optimized_ir.functions.len());
                     for func in &optimized_ir.functions {

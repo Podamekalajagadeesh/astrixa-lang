@@ -1,0 +1,7 @@
+// Simple Web3 Keccak Test
+// Demonstrates the keccak hash function from Step 53
+
+fn main {
+    let h = web3.keccak("ASTRIXA")
+    println(h)
+}

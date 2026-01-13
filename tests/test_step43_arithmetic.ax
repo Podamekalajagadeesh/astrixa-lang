@@ -1,0 +1,42 @@
+// STEP 43: Expressions, Arithmetic & Type Enforcement
+// Test program demonstrating:
+// - Binary arithmetic operators (+, -, *, /)
+// - Operator precedence (* before +)
+// - Type safety (compile-time checking)
+// - Complex expressions
+
+fn test_basic_arithmetic {
+  let a = 5
+  let b = 6
+  let c = a + b
+  print(c)
+}
+
+fn test_precedence {
+  let a = 5
+  let b = 6
+  let c = a + b * 3
+  print(c)
+}
+
+fn test_multiple_ops {
+  let x = 10
+  let y = 20
+  let z = 30
+  let result = x + y * z - 100
+  print(result)
+}
+
+fn test_division {
+  let a = 100
+  let b = 10
+  let c = a / b
+  print(c)
+}
+
+fn main {
+  test_basic_arithmetic
+  test_precedence
+  test_multiple_ops
+  test_division
+}

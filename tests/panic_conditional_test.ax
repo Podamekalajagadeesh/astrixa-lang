@@ -1,0 +1,19 @@
+// STEP 48: Conditional Panic Test
+// Demonstrates panic with conditional logic
+
+fn divide(a, b) {
+    if b == 0 {
+        panic("Division by zero is not allowed")
+    }
+    return a / b
+}
+
+fn main {
+    println("Testing conditional panic...")
+    let result1 = divide(10, 2)
+    println("10 / 2 = ")
+    println(result1)
+    
+    let result2 = divide(10, 0)
+    println("This should never print")
+}

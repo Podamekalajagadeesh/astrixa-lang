@@ -1,0 +1,8 @@
+// STEP 48: Panic Test Program
+// Tests explicit failure with clear error messages
+
+fn main {
+    println("Testing panic functionality...")
+    panic("Fatal error occurred")
+    println("This should never execute")
+}

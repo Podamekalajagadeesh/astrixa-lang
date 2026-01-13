@@ -1,0 +1,40 @@
+// ASTRIXA Web3 Test Program - Step 53
+// Demonstrates blockchain-native features built into the language
+
+fn main {
+    println("🌐 ASTRIXA Web3 Demo")
+    println("")
+    
+    // Test 1: Get wallet address
+    println("Test 1: Wallet")
+    let wallet = web3.wallet()
+    print("Wallet: ")
+    println(wallet)
+    println("")
+    
+    // Test 2: Keccak hash (Ethereum standard)
+    println("Test 2: Keccak Hash")
+    let data = "Hello ASTRIXA"
+    let hash = web3.keccak(data)
+    print("Hash: ")
+    println(hash)
+    println("")
+    
+    // Test 3: Sign message
+    println("Test 3: Sign Message")
+    let message = "ASTRIXA is Web3-native"
+    let sig = web3.sign(message)
+    print("Signature: ")
+    println(sig)
+    println("")
+    
+    // Test 4: Get balance
+    println("Test 4: Balance")
+    let balance = web3.balance(wallet)
+    print("Balance: ")
+    println(balance)
+    println(" wei")
+    println("")
+    
+    println("✅ Web3 features working!")
+}

@@ -1,0 +1,11 @@
+// STEP 46: Basic function parameters test
+// Tests: add function with two parameters
+
+fn add(a, b) {
+    return a + b
+}
+
+fn main {
+    let x = add(10, 20)
+    print(x)
+}

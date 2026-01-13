@@ -1,0 +1,21 @@
+// STEP 46: Multiple functions test
+// Tests: multiple function definitions and calls
+
+fn add(a, b) {
+    return a + b
+}
+
+fn multiply(x, y) {
+    return x * y
+}
+
+fn calculate(a, b) {
+    let sum = add(a, b)
+    let product = multiply(a, b)
+    return sum + product
+}
+
+fn main {
+    let result = calculate(5, 3)
+    print(result)
+}

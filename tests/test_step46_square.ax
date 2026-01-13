@@ -1,0 +1,11 @@
+// STEP 46: Square function test
+// Tests: single parameter function
+
+fn square(x) {
+    return x * x
+}
+
+fn main {
+    let v = square(6)
+    print(v)
+}

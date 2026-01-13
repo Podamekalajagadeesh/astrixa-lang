@@ -1,0 +1,53 @@
+fn test_simple_if {
+    let x = 8
+    let y = 10
+    
+    if x > y {
+        print("X is greater")
+    } else {
+        print("Y is greater or equal")
+    }
+}
+
+fn test_if_without_else {
+    let a = 15
+    
+    if a > 10 {
+        print("A is greater than 10")
+    }
+}
+
+fn test_nested_if {
+    let x = 5
+    let y = 10
+    
+    if x < y {
+        if x > 0 {
+            print("X is positive and less than Y")
+        }
+    }
+}
+
+fn test_comparison_operators {
+    let a = 10
+    let b = 5
+    
+    if a == 10 {
+        print("A equals 10")
+    }
+    
+    if a != b {
+        print("A not equal B")
+    }
+    
+    if a >= b {
+        print("A greater or equal B")
+    }
+}
+
+fn main {
+    test_simple_if
+    test_if_without_else
+    test_nested_if
+    test_comparison_operators
+}

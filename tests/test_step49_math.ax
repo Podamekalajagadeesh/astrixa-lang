@@ -1,0 +1,14 @@
+// STEP 49: Module test - math module
+// This module exports mathematical functions
+
+export fn add(a, b) {
+    return a + b
+}
+
+export fn mul(a, b) {
+    return a * b
+}
+
+export fn square(n) {
+    return n * n
+}

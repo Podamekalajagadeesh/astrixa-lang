@@ -1,0 +1,32 @@
+// STEP 42: Test Variables and Local Stack Frames
+// This test demonstrates:
+// - let statement declarations
+// - variable initialization with values
+// - variable access in expressions
+// - multiple variables in same scope
+
+fn test_basic_int {
+  let x = 42
+  print(x)
+}
+
+fn test_multiple_vars {
+  let a = 10
+  let b = 20
+  let sum = a + b
+  print(sum)
+}
+
+fn test_string_var {
+  let greeting = "Hello"
+  print(greeting)
+}
+
+fn test_arithmetic_with_vars {
+  let num1 = 100
+  let num2 = 50
+  let product = num1 * num2
+  let quotient = num1 / num2
+  print(product)
+  print(quotient)
+}

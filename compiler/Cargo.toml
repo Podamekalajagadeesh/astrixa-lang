@@ -7,6 +7,10 @@ edition = "2021"
 name = "astrixa"
 path = "src/main.rs"
 
+[[bin]]
+name = "compile_modules"
+path = "src/bin/compile_modules.rs"
+
 [dependencies]
 wasm-bindgen = "0.2"
 serde = { version = "1.0", features = ["derive"] }

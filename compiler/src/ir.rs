@@ -19,8 +19,10 @@ pub enum IRInstr {
     LoadConstString(String),
     
     // Variables
-    LoadVar(String),
-    StoreVar(String),
+    LoadVar(String),      // Load variable by name (legacy)
+    StoreVar(String),     // Store variable by name (legacy)
+    LoadLocal(u32),       // Load from local slot (new for Step 42)
+    StoreLocal(u32),      // Store to local slot (new for Step 42)
     
     // Arithmetic
     Add,
@@ -47,7 +49,10 @@ pub enum IRInstr {
     JumpIfFalse(usize),    // Conditional jump
     Call(String, usize),   // Function name, arg count
     CallStd(String),       // Call standard library function (runtime-provided)
+    CallAI(String),        // STEP 52: Call AI function (runtime-provided AI)
+    CallWeb3(String),      // STEP 53: Call Web3 function (runtime-provided Web3)
     Return,
+    Panic,                 // STEP 48: Panic - abort execution with error
     
     // Stack manipulation
     Pop,
@@ -60,6 +65,7 @@ pub enum IRInstr {
 #[derive(Debug, Clone)]
 pub struct IRFunction {
     pub name: String,
+    pub param_count: usize,  // STEP 46: Number of parameters
     pub instructions: Vec<IRInstr>,
     pub local_count: usize,  // Number of local variables
 }
@@ -68,6 +74,7 @@ impl IRFunction {
     pub fn new(name: String) -> Self {
         Self {
             name,
+            param_count: 0,  // STEP 46: Initialize to 0
             instructions: Vec::new(),
             local_count: 0,
         }

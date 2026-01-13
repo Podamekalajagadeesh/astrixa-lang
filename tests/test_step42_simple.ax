@@ -1,0 +1,7 @@
+// STEP 42: Test Variables and Local Stack Frames
+// Simple test for basic let statement and print
+
+fn main {
+  let x = 10
+  print(x)
+}

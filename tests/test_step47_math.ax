@@ -1,0 +1,64 @@
+// STEP 47: Math Stdlib Test
+// Comprehensive test of all math functions
+
+fn main {
+    println("=== MATH STDLIB TEST ===")
+    
+    // Absolute value tests
+    println("abs(42) = ")
+    println(abs(42))
+    
+    println("abs(-42) = ")
+    println(abs(-42))
+    
+    println("abs(0) = ")
+    println(abs(0))
+    
+    // Power tests
+    println("pow(2, 0) = ")
+    println(pow(2, 0))
+    
+    println("pow(2, 1) = ")
+    println(pow(2, 1))
+    
+    println("pow(2, 10) = ")
+    println(pow(2, 10))
+    
+    println("pow(10, 3) = ")
+    println(pow(10, 3))
+    
+    // Square root tests
+    println("sqrt(0) = ")
+    println(sqrt(0))
+    
+    println("sqrt(1) = ")
+    println(sqrt(1))
+    
+    println("sqrt(4) = ")
+    println(sqrt(4))
+    
+    println("sqrt(100) = ")
+    println(sqrt(100))
+    
+    // Min/Max tests
+    println("min(5, 10) = ")
+    println(min(5, 10))
+    
+    println("max(5, 10) = ")
+    println(max(5, 10))
+    
+    println("min(-5, 5) = ")
+    println(min(-5, 5))
+    
+    println("max(-5, 5) = ")
+    println(max(-5, 5))
+    
+    // Random number (just verify it runs)
+    println("Random number 0-99:")
+    println(rand(100))
+    
+    println("Random number 0-999:")
+    println(rand(1000))
+    
+    println("=== MATH TEST COMPLETE ===")
+}

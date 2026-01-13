@@ -1,0 +1,20 @@
+// STEP 47: Time Stdlib Test
+// Tests time-related functions
+
+fn main {
+    println("=== TIME STDLIB TEST ===")
+    
+    println("Current Unix timestamp (ms):")
+    println(time())
+    
+    println("Getting timestamp again:")
+    println(time())
+    
+    println("Time elapsed check:")
+    let t1 = time()
+    let t2 = time()
+    println("Time difference (should be small):")
+    println(t2 - t1)
+    
+    println("=== TIME TEST COMPLETE ===")
+}
