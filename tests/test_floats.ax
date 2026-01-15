@@ -1,0 +1,10 @@
+fn main() {
+    let pi = 3.14159
+    let e = 2.71828
+    
+    let sum = pi + e
+    let product = pi * e
+    
+    println(sum)
+    println(product)
+}

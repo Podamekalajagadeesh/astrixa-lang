@@ -39,16 +39,16 @@ impl TypeChecker {
     fn check_stmt(&mut self, stmt: &Stmt) {
         match stmt {
             Stmt::Function { name, params, return_type, body } => {
-                // STEP 46: Register function signature
+                // Register function signature with provisional return type (may be inferred)
                 let param_types = vec![Type::Int; params.len()]; // For V1, all params are Int
-                let sig = FunctionSignature {
+                let provisional_sig = FunctionSignature {
                     params: param_types.clone(),
                     return_type: return_type.clone(),
                 };
-                self.functions.insert(name.clone(), sig);
+                self.functions.insert(name.clone(), provisional_sig);
                 self.symbols.insert(name.clone(), return_type.clone());
 
-                // STEP 46: Register parameters as local variables
+                // Register parameters as local variables
                 for param in params {
                     self.symbols.insert(param.clone(), Type::Int);
                 }
@@ -57,8 +57,37 @@ impl TypeChecker {
                 for inner_stmt in body {
                     self.check_stmt(inner_stmt);
                 }
-                
-                // STEP 46: Clean up parameter symbols after function
+
+                // Infer function return type from return statements
+                let returns = self.collect_return_types_in_body(body);
+                let inferred_return = if returns.is_empty() {
+                    Type::Void
+                } else {
+                    // Ensure all return types are consistent
+                    let first = returns[0].clone();
+                    let mut consistent = true;
+                    for t in &returns {
+                        if *t != first && *t != Type::Unknown {
+                            consistent = false;
+                            break;
+                        }
+                    }
+                    if consistent { first } else {
+                        self.errors.push(format!(
+                            "Type error: inconsistent return types in function '{}' (found {:?})",
+                            name, returns
+                        ));
+                        Type::Unknown
+                    }
+                };
+
+                // Update function signature and symbol with inferred type
+                if let Some(sig) = self.functions.get_mut(name) {
+                    sig.return_type = inferred_return.clone();
+                }
+                self.symbols.insert(name.clone(), inferred_return);
+
+                // Clean up parameter symbols after function
                 for param in params {
                     self.symbols.remove(param);
                 }
@@ -68,11 +97,9 @@ impl TypeChecker {
                 // For now, just validate the expression exists
             }
             Stmt::Let { name, value } => {
-                // Check the value expression
-                let _value_type = self.check_expr(value);
-                // In a full type system, we'd infer the type of name from value
-                // For now, store it as Unknown
-                self.symbols.insert(name.clone(), Type::Unknown);
+                // Infer the variable's type from the initializer expression
+                let value_type = self.check_expr(value);
+                self.symbols.insert(name.clone(), value_type);
             }
             Stmt::If { condition, then_body, else_body } => {
                 // Check condition expression must be Int (boolean)
@@ -134,12 +161,12 @@ impl TypeChecker {
             Stmt::Return(expr) => {
                 // STEP 46: Check return expression type
                 let _return_type = self.check_expr(expr);
-                // In V1, we accept any return type
+                // Function-level inference happens in the function arm
             }
             Stmt::Panic(expr) => {
                 // STEP 48: Check panic expression must be a string
                 let expr_type = self.check_expr(expr);
-                if expr_type != Type::String && expr_type != Type::Text && expr_type != Type::Unknown {
+                if expr_type != Type::String && expr_type != Type::Unknown {
                     self.errors.push(format!(
                         "Type error: panic() requires a string message, got {:?}",
                         expr_type
@@ -149,13 +176,39 @@ impl TypeChecker {
         }
     }
 
+    // Collect return types from a sequence of statements (recursively)
+    fn collect_return_types_in_body(&mut self, body: &[Stmt]) -> Vec<Type> {
+        let mut returns = Vec::new();
+        for stmt in body {
+            match stmt {
+                Stmt::Return(expr) => {
+                    returns.push(self.check_expr(expr));
+                }
+                Stmt::If { then_body, else_body, .. } => {
+                    returns.extend(self.collect_return_types_in_body(then_body));
+                    if let Some(else_b) = else_body {
+                        returns.extend(self.collect_return_types_in_body(else_b));
+                    }
+                }
+                Stmt::While { body: loop_body, .. } => {
+                    returns.extend(self.collect_return_types_in_body(loop_body));
+                }
+                Stmt::Function { body: inner, .. } => {
+                    // Nested function: do not consider its returns for outer function
+                    let _ = inner; // explicitly ignore
+                }
+                _ => {}
+            }
+        }
+        returns
+    }
+
     fn check_expr(&mut self, expr: &Expr) -> Type {
         match expr {
             Expr::Number(_) => Type::Int,
             Expr::Float(_) => Type::Float,
             Expr::Bool(_) => Type::Bool,
             Expr::String(_) => Type::String,
-            Expr::Text(_) => Type::Text,
             Expr::Identifier(name) => {
                 self.symbols.get(name).cloned().unwrap_or(Type::Unknown)
             }

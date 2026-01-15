@@ -230,9 +230,6 @@ fn lower_expression(expr: &Expr, function: &mut IRFunction, ctx: &LowerCtx) {
         Expr::String(s) => {
             function.add_instruction(IRInstr::LoadConstString(s.clone()));
         }
-        Expr::Text(t) => {
-            function.add_instruction(IRInstr::LoadConstString(t.clone()));
-        }
         Expr::Identifier(name) => {
             // Check if it's a local variable first
             if let Some(slot) = ctx.get(name) {

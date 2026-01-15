@@ -1,0 +1,10 @@
+fn main() {
+    let a = 10
+    let b = 3
+    
+    let remainder = a % b
+    println(remainder)  // Should be 1
+    
+    let even = 8 % 2
+    println(even)  // Should be 0
+}

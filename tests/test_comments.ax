@@ -1,0 +1,10 @@
+// This is a single-line comment
+fn main() {
+    // Variable with comment
+    let x = 42  // inline comment works too
+    
+    // Function call
+    println(x)
+}
+
+// Another comment at the end

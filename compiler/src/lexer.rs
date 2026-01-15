@@ -35,6 +35,7 @@ impl Lexer {
             '-' => self.simple(Token::Minus),
             '*' => self.simple(Token::Star),
             '/' => self.simple(Token::Slash),
+            '%' => self.simple(Token::Percent),
             ':' => self.simple(Token::Colon),
             ',' => self.simple(Token::Comma),
             '.' => self.simple(Token::Dot),  // STEP 49: Module access
@@ -66,10 +67,22 @@ impl Lexer {
     }
 
     fn skip_whitespace(&mut self) {
-        while self.position < self.input.len()
-            && self.input[self.position].is_whitespace()
-        {
-            self.advance();
+        while self.position < self.input.len() {
+            if self.input[self.position].is_whitespace() {
+                self.advance();
+            } else if self.position + 1 < self.input.len()
+                && self.input[self.position] == '/'
+                && self.input[self.position + 1] == '/'
+            {
+                // Skip single-line comment
+                self.advance(); // skip first /
+                self.advance(); // skip second /
+                while self.position < self.input.len() && self.input[self.position] != '\n' {
+                    self.advance();
+                }
+            } else {
+                break;
+            }
         }
     }
 
@@ -94,6 +107,8 @@ impl Lexer {
             "panic" => Token::Panic,  // STEP 48: Panic keyword
             "import" => Token::Import, // STEP 49: Import keyword
             "export" => Token::Export, // STEP 49: Export keyword
+            "true" => Token::True,
+            "false" => Token::False,
             _ => Token::Identifier(text),
         }
     }
@@ -141,17 +156,41 @@ impl Lexer {
 
     fn read_number(&mut self) -> Token {
         let start = self.position;
+        let mut is_float = false;
 
+        // Read integer part
         while self.position < self.input.len() && self.input[self.position].is_numeric() {
             self.advance();
         }
 
+        // Check for decimal point
+        if self.position < self.input.len() && self.input[self.position] == '.' {
+            // Look ahead to ensure it's a float, not module access
+            if self.position + 1 < self.input.len() && self.input[self.position + 1].is_numeric() {
+                is_float = true;
+                self.advance(); // consume '.'
+                
+                // Read fractional part
+                while self.position < self.input.len() && self.input[self.position].is_numeric() {
+                    self.advance();
+                }
+            }
+        }
+
         let text: String = self.input[start..self.position].iter().collect();
         
-        if let Ok(num) = text.parse::<i64>() {
-            Token::Number(num)
+        if is_float {
+            if let Ok(num) = text.parse::<f64>() {
+                Token::Float(num)
+            } else {
+                Token::Identifier(text)
+            }
         } else {
-            Token::Identifier(text)
+            if let Ok(num) = text.parse::<i64>() {
+                Token::Number(num)
+            } else {
+                Token::Identifier(text)
+            }
         }
     }
 

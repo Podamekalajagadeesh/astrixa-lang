@@ -388,11 +388,11 @@ impl Parser {
         Ok(left)
     }
     
-    /// Parse multiplicative expressions (higher precedence): a * b / c
+    /// Parse multiplicative expressions (higher precedence): a * b / c % d
     fn parse_multiplicative(&mut self) -> Result<Expr, CompileError> {
         let mut left = self.parse_call()?;
         
-        while matches!(self.current, Token::Star | Token::Slash) {
+        while matches!(self.current, Token::Star | Token::Slash | Token::Percent) {
             let op = self.current.clone();
             self.advance();
             let right = self.parse_call()?;
@@ -400,6 +400,7 @@ impl Parser {
             left = match op {
                 Token::Star => Expr::Mul(Box::new(left), Box::new(right)),
                 Token::Slash => Expr::Div(Box::new(left), Box::new(right)),
+                Token::Percent => Expr::Mod(Box::new(left), Box::new(right)),
                 _ => unreachable!(),
             };
         }
@@ -485,6 +486,19 @@ impl Parser {
                 let n = *n;
                 self.advance();
                 Expr::Number(n)
+            }
+            Token::Float(f) => {
+                let f = *f;
+                self.advance();
+                Expr::Float(f)
+            }
+            Token::True => {
+                self.advance();
+                Expr::Bool(true)
+            }
+            Token::False => {
+                self.advance();
+                Expr::Bool(false)
             }
             Token::String(s) => {
                 let s = s.clone();

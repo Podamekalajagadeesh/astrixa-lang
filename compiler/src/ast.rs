@@ -14,7 +14,6 @@ pub enum Expr {
     Float(f64),
     Bool(bool),
     String(String),
-    Text(String),
     Identifier(String),
     Call(String, Vec<Expr>), // Function call: name, arguments
     ModuleCall(String, String, Vec<Expr>), // STEP 49: module.function(args)

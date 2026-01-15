@@ -10,9 +10,12 @@ pub enum Token {
     Panic,  // STEP 48: Panic keyword
     Import, // STEP 49: Module import
     Export, // STEP 49: Module export
+    True,   // Boolean literal
+    False,  // Boolean literal
 
     Identifier(String),
     Number(i64),
+    Float(f64),  // Float literal
     String(String),
 
     LParen,
@@ -29,6 +32,7 @@ pub enum Token {
     Minus,
     Star,
     Slash,
+    Percent,  // Modulo operator %
     Assign,  // =
     
     // Comparison operators

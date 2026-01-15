@@ -1,0 +1,12 @@
+fn main() {
+    let t = true
+    let f = false
+    
+    if t {
+        println("true works!")
+    }
+    
+    if f == false {
+        println("false works!")
+    }
+}
