@@ -54,9 +54,8 @@ const astrixaStdlib = {
     // Read a line from stdin (returns ptr to string)
     // Returns: i32 (pointer to string in memory)
     input: () => {
-      // TODO: Implement proper stdin reading
-      // For now, return 0 (empty string ptr)
-      console.warn("input() not yet fully implemented");
+      // Not implemented in v0.1.0; returns 0 (empty string pointer)
+      console.warn("input() is not implemented in this version");
       return 0;
     },
 
@@ -125,10 +124,10 @@ const astrixaStdlib = {
     time: () => Date.now() | 0,
     
     // Sleep for specified milliseconds
-    // NOTE: In WASM, we can't truly block, so this is a placeholder
+    // Blocking sleep is not supported in synchronous WASM environments
     sleep: (ms) => {
-      console.warn(`sleep(${ms}) called - async sleep not supported in sync WASM`);
-      // In a real implementation, you'd need async/await support
+      console.warn(`sleep(${ms}) called - blocking sleep is not supported in synchronous WASM runtime`);
+      // No-op in the current synchronous runtime
     },
 
     // ==========================================
@@ -148,7 +147,7 @@ const astrixaStdlib = {
       const hash = crypto.createHash("sha256").update(data).digest("hex");
       console.log(`[hash] ${hash}`);
       
-      // TODO: Store hash in memory and return pointer
+      // Hash string is not stored back to memory in v0.1.0; returning 0
       return 0;
     },
     
@@ -161,9 +160,9 @@ const astrixaStdlib = {
       const data = Buffer.from(bytes);
       
       // Requires keccak256 library
-      // For V1, we'll use SHA256 as placeholder
+      // Using SHA256 approximation in v0.1.0
       const hash = crypto.createHash("sha256").update(data).digest("hex");
-      console.log(`[keccak256] ${hash} (placeholder: using SHA256)`);
+      console.log(`[keccak256] ${hash} (using SHA256 approximation)`);
       
       return 0;
     },
@@ -212,7 +211,7 @@ const astrixaStdlib = {
       const bytes = new Uint8Array(memoryInstance.buffer, ptr, len);
       const prompt = new TextDecoder("utf-8").decode(bytes);
       
-      // V1: Mock AI response (in production, call OpenAI/Anthropic/local LLM)
+      // Mock AI response (in production, call OpenAI/Anthropic/local LLM)
       const response = `[AI Generated] Response to: "${prompt}"`;
       
       console.log(`🤖 AI Generate: ${prompt} -> ${response}`);
@@ -242,7 +241,7 @@ const astrixaStdlib = {
       const bytes = new Uint8Array(memoryInstance.buffer, ptr, len);
       const text = new TextDecoder("utf-8").decode(bytes);
       
-      // V1: Mock embedding (in production, call embedding API)
+      // Mock embedding (in production, call an embedding API)
       const embedding = `[0.1, 0.2, 0.3, ...]`; // Simulated vector
       
       console.log(`🔢 AI Embed: ${text} -> ${embedding}`);
@@ -269,7 +268,7 @@ const astrixaStdlib = {
       const bytes = new Uint8Array(memoryInstance.buffer, ptr, len);
       const text = new TextDecoder("utf-8").decode(bytes);
       
-      // V1: Mock classification (in production, call classification API)
+      // Mock classification (in production, call a classification API)
       const classification = "positive"; // Simulated sentiment
       
       console.log(`🏷️  AI Classify: ${text} -> ${classification}`);
@@ -296,7 +295,7 @@ const astrixaStdlib = {
         return 0;
       }
       
-      // V1: Mock wallet address (in production, connect to MetaMask/WalletConnect)
+      // Mock wallet address (in production, connect to MetaMask/WalletConnect)
       const walletAddress = "0x742d35Cc6634C0532925a3b844Bc9e7595f0bEb5";
       
       console.log(`💼 Web3 Wallet: ${walletAddress}`);

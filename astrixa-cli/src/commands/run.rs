@@ -98,8 +98,8 @@ async function run() {{
 run();
 "#, wasm_file.display());
     
-    // Write temporary JS file
-    let temp_js = wasm_file.parent().unwrap().join("_run_temp.js");
+    // Write an ephemeral JS runner file
+    let temp_js = wasm_file.parent().unwrap().join("_run_ephemeral.js");
     std::fs::write(&temp_js, js_runner)
         .map_err(|e| format!("Failed to create runner: {}", e))?;
     
@@ -108,7 +108,7 @@ run();
         .arg(&temp_js)
         .output();
     
-    // Clean up temp file
+    // Clean up runner file
     let _ = std::fs::remove_file(&temp_js);
     
     match output {

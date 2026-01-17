@@ -1,0 +1,17 @@
+/**
+ * ASTRIXA Hello World Example
+ * 
+ * A simple greeting program demonstrating:
+ * - Function definition
+ * - String literals
+ * - Print I/O
+ * 
+ * Output:
+ *   Hello, ASTRIXA!
+ *   Welcome to Web3 Smart Contracts with AI
+ */
+
+fn main {
+  print("Hello, ASTRIXA!")
+  print("Welcome to Web3 Smart Contracts with AI")
+}

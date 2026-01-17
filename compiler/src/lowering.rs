@@ -57,7 +57,7 @@ pub fn lower(stmts: &[Stmt]) -> IRModule {
             Stmt::Import(_) => {
                 // Imports are handled at compilation level, not lowered to IR
             }
-            Stmt::Function { name, params, body, exported, .. } => {
+            Stmt::Function { name, params, body, exported: _, .. } => {
                 let function = lower_function(name, params, body);
                 module.add_function(function);
                 // Note: `exported` flag is tracked in AST but doesn't affect IR
@@ -103,10 +103,13 @@ fn lower_function(name: &str, params: &[String], body: &[Stmt]) -> IRFunction {
 /// Lower a single statement
 fn lower_statement(stmt: &Stmt, function: &mut IRFunction, ctx: &mut LowerCtx) {
     match stmt {
+        Stmt::Import(_) => {
+            // Imports are handled at module level, not lowered to IR
+        }
         Stmt::Expression(expr) => {
             lower_expression(expr, function, ctx);
-            // Pop the result if it's not used
-            function.add_instruction(IRInstr::Pop);
+            // Don't emit Pop - let the WASM codegen decide whether to drop based on context
+            // In most cases, expression statements don't have their result used
         }
         Stmt::Let { name, value } => {
             // Allocate a new local variable slot
@@ -125,9 +128,9 @@ fn lower_statement(stmt: &Stmt, function: &mut IRFunction, ctx: &mut LowerCtx) {
             // Lower the condition expression
             lower_expression(condition, function, ctx);
             
-            // Add JumpIfFalse - will patch the target later
+            // Add JumpIfFalse - target will be patched in a later step
             let jump_if_false_index = function.instructions.len();
-            function.add_instruction(IRInstr::JumpIfFalse(0)); // placeholder
+            function.add_instruction(IRInstr::JumpIfFalse(0));
             
             // Lower then body
             for stmt in then_body {
@@ -136,9 +139,9 @@ fn lower_statement(stmt: &Stmt, function: &mut IRFunction, ctx: &mut LowerCtx) {
             
             // Check if we have an else body
             if let Some(else_body) = else_body {
-                // Add Jump to skip else body - will patch later
+                // Add Jump to skip else body - target will be patched later
                 let jump_index = function.instructions.len();
-                function.add_instruction(IRInstr::Jump(0)); // placeholder
+                function.add_instruction(IRInstr::Jump(0));
                 
                 // Patch JumpIfFalse to jump here (to else body)
                 let else_start = function.instructions.len();
@@ -182,9 +185,9 @@ fn lower_statement(stmt: &Stmt, function: &mut IRFunction, ctx: &mut LowerCtx) {
             // Lower the condition expression
             lower_expression(condition, function, ctx);
             
-            // Add JumpIfFalse to exit the loop - will patch later
+            // Add JumpIfFalse to exit the loop - target will be patched later
             let jump_if_false_index = function.instructions.len();
-            function.add_instruction(IRInstr::JumpIfFalse(0)); // placeholder
+            function.add_instruction(IRInstr::JumpIfFalse(0));
             
             // Lower loop body
             for stmt in body {
@@ -270,7 +273,21 @@ fn lower_expression(expr: &Expr, function: &mut IRFunction, ctx: &LowerCtx) {
             
             // Generate fully qualified function name: module.func
             let qualified_name = format!("{}.{}", module_name, func_name);
-            function.add_instruction(IRInstr::Call(qualified_name, args.len()));
+            
+            // STEP 52: Check if this is an AI function
+            if is_ai_function(&qualified_name) {
+                function.add_instruction(IRInstr::CallAI(qualified_name));
+            }
+            // STEP 53: Check if this is a Web3 function
+            else if is_web3_function(&qualified_name) {
+                function.add_instruction(IRInstr::CallWeb3(qualified_name));
+            }
+            // STEP 54: Check if this is a file system function
+            else if is_fs_function(&qualified_name) {
+                function.add_instruction(IRInstr::CallFS(qualified_name));
+            } else {
+                function.add_instruction(IRInstr::Call(qualified_name, args.len()));
+            }
         }
         
         // Binary arithmetic operators (STEP 43)
@@ -347,6 +364,11 @@ fn is_ai_function(name: &str) -> bool {
 /// Check if a function is a Web3 function (STEP 53)
 fn is_web3_function(name: &str) -> bool {
     crate::stdlib::is_web3(name)
+}
+
+/// Check if a function is a file system function (STEP 54)
+fn is_fs_function(name: &str) -> bool {
+    crate::stdlib::is_fs_function(name)
 }
 
 #[cfg(test)]

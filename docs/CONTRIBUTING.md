@@ -57,7 +57,7 @@ Should compile successfully
 Segmentation fault
 
 ### Version
-ASTRIXA v0.4.0, rustc 1.75.0
+ASTRIXA v0.1.0, rustc 1.70.0
 ```
 
 ### 💡 Suggesting Features
@@ -84,7 +84,6 @@ Documentation is crucial! Help us by:
 - Adding examples
 - Improving clarity
 - Writing tutorials
-- Translating (coming soon)
 
 **Documentation lives in:**
 - `/docs/` - Long-form documentation
@@ -485,21 +484,19 @@ BREAKING CHANGE: async is now a reserved keyword
 
 - **GitHub Issues:** Bug reports and feature requests
 - **GitHub Discussions:** General questions and ideas
-- **Discord:** Real-time chat (coming soon)
-- **Forum:** Long-form discussions (coming soon)
-- **Twitter:** @astrixalang (coming soon)
+- **Pull Requests:** Code contributions and reviews
 
 ### Getting Help
 
 **Stuck? Ask for help!**
-- Comment on your PR
-- Ask in Discord #contributors channel
-- Email: contributors@astrixa.dev
+- Comment on your PR or issue
+- Start a discussion on GitHub Discussions
+- Tag maintainers for urgent matters
 
 **Don't know where to start?**
 - Look for `good-first-issue` labels
-- Ask in Discord #new-contributors
 - Check [ROADMAP.md](ROADMAP.md) for ideas
+- Browse existing issues and PRs
 
 ### Recognition
 
@@ -529,7 +526,7 @@ BREAKING CHANGE: async is now a reserved keyword
 **By contributing, you agree that:**
 1. You own the copyright to your contribution
 2. You grant ASTRIXA project a perpetual, worldwide license to use your contribution
-3. Your contribution is provided under Apache 2.0 license
+3. Your contribution is provided under MIT license
 
 **No separate CLA required** - submitting a PR indicates acceptance.
 
@@ -538,7 +535,7 @@ BREAKING CHANGE: async is now a reserved keyword
 **Add copyright notice to new files:**
 ```rust
 // Copyright 2024-2026 ASTRIXA Contributors
-// SPDX-License-Identifier: Apache-2.0
+// SPDX-License-Identifier: MIT
 ```
 
 ---

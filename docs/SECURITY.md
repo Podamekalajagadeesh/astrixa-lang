@@ -10,9 +10,15 @@ The ASTRIXA team takes security seriously. We appreciate your efforts to respons
 
 ## How to Report
 
-### Email
+### GitHub Security Advisories (Recommended)
 
-**Send report to:** security@astrixa.dev
+**Report via:** [GitHub Security Advisories](https://github.com/Podamekalajagadeesh/astrixa-lang/security/advisories/new)
+
+This is the preferred method as it provides:
+- Private discussion with maintainers
+- Coordinated disclosure timeline
+- Automatic CVE assignment
+- Credit in security advisories
 
 **Include:**
 1. **Description** - What is the vulnerability?
@@ -21,13 +27,6 @@ The ASTRIXA team takes security seriously. We appreciate your efforts to respons
 4. **Proof of Concept** - Code sample if applicable
 5. **Suggested Fix** - If you have ideas
 6. **Disclosure Timeline** - Your expectations
-
-### PGP Encryption (Optional)
-
-For highly sensitive reports, use our PGP key:
-```
-[PGP key will be added when available]
-```
 
 ---
 
@@ -215,8 +214,8 @@ let data = read("file.txt");  // External state
 
 ### Audit Reports
 
-Published audits will be linked here:
-- [Audit Report v1.0](#) (coming soon)
+Published audits will be linked here as they become available.
+- Current version (v0.1.0) has not been formally audited
 
 ---
 
@@ -355,9 +354,8 @@ See [RFC 0003](rfcs/0003-smart-contract-subset.md) for details.
 
 **How you'll be notified:**
 1. GitHub Security Advisories (subscribe)
-2. Discord #security-announcements
-3. Twitter @astrixalang
-4. Email (if subscribed to mailing list)
+2. GitHub Releases page
+3. GitHub Discussions
 
 ### Updating
 
@@ -382,20 +380,18 @@ sha256sum astrixa-binary
 
 ### Security Team
 
-**Email:** security@astrixa.dev  
-**PGP:** [Key when available]
-
+**GitHub Security:** [Report via Security Advisories](https://github.com/Podamekalajagadeesh/astrixa-lang/security/advisories/new)  
 **Response time:** Within 48 hours
 
 ### Questions
 
 **General security questions:**
-- Discord: #security channel
-- GitHub: Discussions
+- GitHub Discussions: Security category
+- GitHub Issues: For non-sensitive questions
 
 **Report vulnerabilities:**
-- Email: security@astrixa.dev (private)
-- NOT: GitHub issues, Discord, Twitter
+- GitHub Security Advisories (private, recommended)
+- NOT: Public GitHub issues
 
 ---
 
@@ -416,7 +412,7 @@ sha256sum astrixa-binary
 
 ### Liability
 
-ASTRIXA is provided "as is" under Apache 2.0 license. See [LICENSE](LICENSE) for details.
+ASTRIXA is provided "as is" under MIT license. See [LICENSE](LICENSE) for details.
 
 ---
 

@@ -105,7 +105,7 @@ The first public release of ASTRIXA - a modern programming language for Web, Web
 ### Technical Details
 
 - **Language**: Rust (compiler, VM, LSP)
-- **License**: MIT or Apache-2.0
+- **License**: MIT
 - **Platforms**: Linux, macOS, Windows
 - **Architecture**: x86_64, aarch64
 

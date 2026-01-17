@@ -38,7 +38,10 @@ impl TypeChecker {
 
     fn check_stmt(&mut self, stmt: &Stmt) {
         match stmt {
-            Stmt::Function { name, params, return_type, body } => {
+            Stmt::Import(_) => {
+                // Imports are handled at module level, not type-checked here
+            }
+            Stmt::Function { name, params, return_type, body, .. } => {
                 // Register function signature with provisional return type (may be inferred)
                 let param_types = vec![Type::Int; params.len()]; // For V1, all params are Int
                 let provisional_sig = FunctionSignature {
@@ -102,12 +105,12 @@ impl TypeChecker {
                 self.symbols.insert(name.clone(), value_type);
             }
             Stmt::If { condition, then_body, else_body } => {
-                // Check condition expression must be Int (boolean)
+                // Check condition expression must be Bool or Int
                 let cond_type = self.check_expr(condition);
                 if cond_type != Type::Int && cond_type != Type::Bool && cond_type != Type::Unknown {
                     self.errors.push(format!(
-                        "Type error: if condition must be Int, got {:?}",
-                        cond_type
+                        "Type error: if condition must be Bool, got {}",
+                        Self::type_to_readable_name(&cond_type)
                     ));
                 }
                 
@@ -138,18 +141,19 @@ impl TypeChecker {
                 
                 if var_type != Type::Unknown && value_type != Type::Unknown && var_type != value_type {
                     self.errors.push(format!(
-                        "Type error: cannot assign {:?} to variable of type {:?}",
-                        value_type, var_type
+                        "Type mismatch: cannot assign {} to variable of type {}",
+                        Self::type_to_readable_name(&value_type),
+                        Self::type_to_readable_name(&var_type)
                     ));
                 }
             }
             Stmt::While { condition, body } => {
-                // Check condition expression must be Int (boolean)
+                // Check condition expression must be Bool or Int
                 let cond_type = self.check_expr(condition);
                 if cond_type != Type::Int && cond_type != Type::Bool && cond_type != Type::Unknown {
                     self.errors.push(format!(
-                        "Type error: while condition must be Int, got {:?}",
-                        cond_type
+                        "Type error: while condition must be Bool, got {}",
+                        Self::type_to_readable_name(&cond_type)
                     ));
                 }
                 
@@ -168,8 +172,8 @@ impl TypeChecker {
                 let expr_type = self.check_expr(expr);
                 if expr_type != Type::String && expr_type != Type::Unknown {
                     self.errors.push(format!(
-                        "Type error: panic() requires a string message, got {:?}",
-                        expr_type
+                        "Type error: panic() requires a string message, got {}",
+                        Self::type_to_readable_name(&expr_type)
                     ));
                 }
             }
@@ -233,8 +237,10 @@ impl TypeChecker {
                             let expected_type = &sig.params[i];
                             if arg_type != *expected_type && arg_type != Type::Unknown {
                                 self.errors.push(format!(
-                                    "Type error: argument {} of function '{}' expects {:?}, got {:?}",
-                                    i, name, expected_type, arg_type
+                                    "Type error: argument {} of function '{}' expects {}, got {}",
+                                    i, name, 
+                                    Self::type_to_readable_name(expected_type),
+                                    Self::type_to_readable_name(&arg_type)
                                 ));
                             }
                         }
@@ -247,18 +253,42 @@ impl TypeChecker {
                 }
             }
             
-            // Arithmetic operators: require both operands to be Int
-            Expr::Add(left, right) | Expr::Sub(left, right) | 
-            Expr::Mul(left, right) | Expr::Div(left, right) | Expr::Mod(left, right) => {
+            // Add operator: can work with Int (addition) or String (concatenation)
+            Expr::Add(left, right) => {
                 let left_type = self.check_expr(left);
                 let right_type = self.check_expr(right);
                 
                 if left_type == Type::Int && right_type == Type::Int {
                     Type::Int
+                } else if left_type == Type::String && right_type == Type::String {
+                    Type::String
+                } else if left_type == Type::Unknown || right_type == Type::Unknown {
+                    Type::Unknown
                 } else {
                     self.errors.push(format!(
-                        "Type error: arithmetic operators require Int operands, got {:?} and {:?}",
-                        left_type, right_type
+                        "Type error: cannot add {} and {} (both operands must be Int or both must be String)",
+                        Self::type_to_readable_name(&left_type),
+                        Self::type_to_readable_name(&right_type)
+                    ));
+                    Type::Unknown
+                }
+            }
+            
+            // Other arithmetic operators: require both operands to be Int
+            Expr::Sub(left, right) | Expr::Mul(left, right) | 
+            Expr::Div(left, right) | Expr::Mod(left, right) => {
+                let left_type = self.check_expr(left);
+                let right_type = self.check_expr(right);
+                
+                if left_type == Type::Int && right_type == Type::Int {
+                    Type::Int
+                } else if left_type == Type::Unknown || right_type == Type::Unknown {
+                    Type::Unknown
+                } else {
+                    self.errors.push(format!(
+                        "Type error: arithmetic operator requires Int operands, got {} and {}",
+                        Self::type_to_readable_name(&left_type),
+                        Self::type_to_readable_name(&right_type)
                     ));
                     Type::Unknown
                 }
@@ -273,14 +303,33 @@ impl TypeChecker {
                 
                 if left_type == Type::Int && right_type == Type::Int {
                     Type::Bool
+                } else if left_type == Type::Unknown || right_type == Type::Unknown {
+                    Type::Bool
                 } else {
                     self.errors.push(format!(
-                        "Type error: comparison operators require Int operands, got {:?} and {:?}",
-                        left_type, right_type
+                        "Type error: comparison operator requires Int operands, got {} and {}",
+                        Self::type_to_readable_name(&left_type),
+                        Self::type_to_readable_name(&right_type)
                     ));
                     Type::Bool
                 }
             }
+            
+            Expr::ModuleCall(..) => {
+                // Module calls are handled at runtime, assume Int for now
+                Type::Int
+            }
+        }
+    }
+
+    fn type_to_readable_name(t: &Type) -> &'static str {
+        match t {
+            Type::Int => "Int",
+            Type::Float => "Float",
+            Type::Bool => "Bool",
+            Type::String => "String",
+            Type::Void => "Void",
+            Type::Unknown => "Unknown",
         }
     }
 

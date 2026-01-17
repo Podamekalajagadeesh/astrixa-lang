@@ -51,6 +51,7 @@ pub enum IRInstr {
     CallStd(String),       // Call standard library function (runtime-provided)
     CallAI(String),        // STEP 52: Call AI function (runtime-provided AI)
     CallWeb3(String),      // STEP 53: Call Web3 function (runtime-provided Web3)
+    CallFS(String),        // STEP 54: Call file system function (runtime-provided FS)
     Return,
     Panic,                 // STEP 48: Panic - abort execution with error
     

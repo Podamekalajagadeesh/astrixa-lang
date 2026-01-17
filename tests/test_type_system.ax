@@ -1,0 +1,135 @@
+// Type System Tests
+// Tests for Int, String, Bool type checking and type mismatch detection
+
+// Test 1: Basic variable type inference
+fn test_int_type {
+  let x = 10
+  print(x)  // x is Int
+}
+
+fn test_string_type {
+  let greeting = "hello"
+  print(greeting)  // greeting is String
+}
+
+fn test_bool_type {
+  let is_active = 1  // 1 is Int, not Bool (for now)
+  print(is_active)
+}
+
+// Test 2: Type mismatch detection (should error)
+fn test_type_mismatch_int_to_string {
+  let x = 10     // x is Int
+  x = "hello"    // ❌ ERROR: cannot assign String to Int
+  print(x)
+}
+
+// Test 3: Type mismatch in assignment
+fn test_type_mismatch_string_to_int {
+  let greeting = "world"  // greeting is String
+  greeting = 42          // ❌ ERROR: cannot assign Int to String
+  print(greeting)
+}
+
+// Test 4: Arithmetic operations with correct types
+fn test_arithmetic_int {
+  let a = 10
+  let b = 20
+  let sum = a + b    // Both Int, OK
+  print(sum)
+}
+
+// Test 5: String concatenation
+fn test_string_concat {
+  let str1 = "hello"
+  let str2 = "world"
+  let result = str1 + str2  // Both String, OK
+  print(result)
+}
+
+// Test 6: Type mismatch in arithmetic (should error)
+fn test_arithmetic_type_mismatch {
+  let num = 10
+  let str = "twenty"
+  let result = num + str    // ❌ ERROR: cannot add Int and String
+  print(result)
+}
+
+// Test 7: Function return type inference
+fn get_int {
+  return 42
+}
+
+fn get_string {
+  return "result"
+}
+
+// Test 8: Return type mismatch detection
+fn inconsistent_returns {
+  if 1 {
+    return 10    // Int
+  } else {
+    return "ten" // String
+  }
+  // ❌ ERROR: inconsistent return types
+}
+
+// Test 9: Function argument type checking
+fn add_ints(a b) {
+  return a + b
+}
+
+fn test_function_args {
+  let result = add_ints(5 10)  // Both Int, OK
+  print(result)
+}
+
+// Test 10: Function argument type mismatch (should error)
+fn test_function_args_mismatch {
+  let result = add_ints(5 "10")  // ❌ ERROR: String argument to Int parameter
+  print(result)
+}
+
+// Test 11: Condition type checking
+fn test_if_condition {
+  let x = 5
+  if x {
+    print("x is truthy")
+  }
+}
+
+// Test 12: Boolean operations (future)
+// Note: Bool type fully supported in next iteration
+fn test_comparison {
+  let a = 10
+  let b = 20
+  let is_less = a < b  // Returns Bool
+  // let inverse = !is_less  // Will be supported in Bool ops iteration
+}
+
+// Test 13: Variable reassignment with same type
+fn test_reassignment_same_type {
+  let x = 10
+  x = 20  // Same type, OK
+  x = 30
+  print(x)
+}
+
+// Test 14: Multiple variable declarations
+fn test_multiple_vars {
+  let a = 10
+  let b = 20
+  let c = "thirty"
+  print(a)
+  print(b)
+  print(c)
+}
+
+// Test 15: Type in loop condition
+fn test_loop_type {
+  let i = 0
+  while i {
+    print(i)
+    i = i + 1
+  }
+}

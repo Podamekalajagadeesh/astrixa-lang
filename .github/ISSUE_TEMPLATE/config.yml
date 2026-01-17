@@ -1,0 +1,11 @@
+blank_issues_enabled: true
+contact_links:
+  - name: 💬 GitHub Discussions
+    url: https://github.com/Podamekalajagadeesh/astrixa-lang/discussions
+    about: Ask questions and discuss ideas with the community
+  - name: 🔒 Security Vulnerability
+    url: https://github.com/Podamekalajagadeesh/astrixa-lang/security/advisories/new
+    about: Report security vulnerabilities privately (DO NOT create public issues)
+  - name: 📖 Documentation
+    url: https://github.com/Podamekalajagadeesh/astrixa-lang/blob/main/docs/DOCUMENTATION_INDEX.md
+    about: Browse the complete documentation

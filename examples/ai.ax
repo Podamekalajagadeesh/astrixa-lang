@@ -1,0 +1,27 @@
+/**
+ * ASTRIXA AI Example
+ * 
+ * Demonstrates AI capabilities with:
+ * - ai.generate() for text generation
+ * - ai.embed() for semantic embeddings
+ * - ai.classify() for text classification
+ * 
+ * Note: Uses alpha-quality mock implementations.
+ * In production, these would connect to real LLM services.
+ * 
+ * Output:
+ *   [AI] Generating response...
+ *   [AI] Text embedded.
+ *   [AI] Classification complete.
+ */
+
+fn main {
+  print("[AI] Generating response...")
+  ai.generate("What is blockchain technology?")
+  
+  print("[AI] Text embedded.")
+  ai.embed("machine learning models")
+  
+  print("[AI] Classification complete.")
+  ai.classify("This is a positive sentiment example!")
+}

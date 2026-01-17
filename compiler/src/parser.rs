@@ -31,7 +31,7 @@ impl Parser {
                     stmts.push(self.parse_export_function()?);
                 }
                 Token::Fn => {
-                    stmts.push(self.parse_function(false)?); // not exported
+                    stmts.push(self.parse_function(false)?);
                 }
                 _ => {
                     self.advance();
@@ -42,9 +42,8 @@ impl Parser {
         Ok(stmts)
     }
     
-    // STEP 49: Parse import statement: import module_name
     fn parse_import(&mut self) -> Result<Stmt, CompileError> {
-        self.advance(); // consume 'import'
+        self.advance();
         
         let module_name = match &self.current {
             Token::Identifier(name) => name.clone(),
@@ -57,14 +56,13 @@ impl Parser {
             }
         };
         
-        self.advance(); // consume module name
+        self.advance();
         
         Ok(Stmt::Import(module_name))
     }
     
-    // STEP 49: Parse export function: export fn name(params) { body }
     fn parse_export_function(&mut self) -> Result<Stmt, CompileError> {
-        self.advance(); // consume 'export'
+        self.advance();
         
         if self.current != Token::Fn {
             return Err(CompileError::new(
@@ -74,11 +72,11 @@ impl Parser {
             ).help("Only functions can be exported. Example: export fn add(a, b) { }"));
         }
         
-        self.parse_function(true) // exported = true
+        self.parse_function(true)
     }
 
     fn parse_function(&mut self, exported: bool) -> Result<Stmt, CompileError> {
-        self.advance(); // consume fn
+        self.advance();
 
         let name = match &self.current {
             Token::Identifier(name) => name.clone(),
@@ -94,21 +92,19 @@ impl Parser {
             }
         };
 
-        self.advance(); // consume name
+        self.advance();
 
-        // Parse parameters: fn add(a, b) or fn main()
         let mut params = Vec::new();
         if let Token::LParen = self.current {
-            self.advance(); // consume (
+            self.advance();
             
             while self.current != Token::RParen && self.current != Token::EOF {
                 if let Token::Identifier(param) = &self.current {
                     params.push(param.clone());
-                    self.advance(); // consume parameter name
+                    self.advance();
                     
-                    // Check for comma
                     if let Token::Comma = self.current {
-                        self.advance(); // consume ,
+                        self.advance();
                     }
                 } else {
                     return Err(CompileError::new(
@@ -120,19 +116,17 @@ impl Parser {
             }
             
             if let Token::RParen = self.current {
-                self.advance(); // consume )
+                self.advance();
             }
         }
 
-        // Default return type to Void for now
         let return_type = Type::Void;
         
-        // Parse function body (expecting { ... })
         let body = if let Token::LBrace = self.current {
-            self.advance(); // consume {
+            self.advance();
             let body = self.parse_block()?;
             if let Token::RBrace = self.current {
-                self.advance(); // consume }
+                self.advance();
             }
             body
         } else {
@@ -144,7 +138,7 @@ impl Parser {
             params,
             return_type,
             body,
-            exported,  // STEP 49: Track export status
+            exported,
         })
     }
     
@@ -161,8 +155,7 @@ impl Parser {
     fn parse_statement(&mut self) -> Result<Stmt, CompileError> {
         match &self.current {
             Token::Let => {
-                // Parse let statement: let name = value
-                self.advance(); // consume 'let'
+                self.advance();
                 
                 let name = match &self.current {
                     Token::Identifier(n) => n.clone(),
@@ -175,10 +168,10 @@ impl Parser {
                     }
                 };
                 
-                self.advance(); // consume name
+                self.advance();
                 
                 if let Token::Assign = self.current {
-                    self.advance(); // consume '='
+                    self.advance();
                 } else {
                     return Err(CompileError::new(
                         "Expected '=' after variable name",
@@ -195,8 +188,7 @@ impl Parser {
                 self.parse_while()
             }
             Token::If => {
-                // Parse if statement: if condition { body } [else { body }]
-                self.advance(); // consume 'if'
+                self.advance();
                 
                 let condition = self.parse_expression()?;
                 
@@ -207,7 +199,7 @@ impl Parser {
                         self.lexer.column,
                     ));
                 }
-                self.advance(); // consume '{'
+                self.advance();
                 
                 let then_body = self.parse_block()?;
                 
@@ -218,11 +210,10 @@ impl Parser {
                         self.lexer.column,
                     ));
                 }
-                self.advance(); // consume '}'
+                self.advance();
                 
-                // Check for else
                 let else_body = if self.current == Token::Else {
-                    self.advance(); // consume 'else'
+                    self.advance();
                     
                     if self.current != Token::LBrace {
                         return Err(CompileError::new(
@@ -231,7 +222,7 @@ impl Parser {
                             self.lexer.column,
                         ));
                     }
-                    self.advance(); // consume '{'
+                    self.advance();
                     
                     let body = self.parse_block()?;
                     
@@ -242,7 +233,7 @@ impl Parser {
                             self.lexer.column,
                         ));
                     }
-                    self.advance(); // consume '}'
+                    self.advance();
                     
                     Some(body)
                 } else {
@@ -252,7 +243,7 @@ impl Parser {
                 Ok(Stmt::If { condition, then_body, else_body })
             }
             Token::Return => {
-                self.advance(); // consume return
+                self.advance();
                 let expr = self.parse_expression()?;
                 Ok(Stmt::Return(expr))
             }
@@ -286,24 +277,21 @@ impl Parser {
                 Ok(Stmt::Panic(expr))
             }
             Token::Identifier(_) => {
-                // Could be assignment: name = value
-                let name = match &self.current {
-                    Token::Identifier(n) => n.clone(),
-                    _ => unreachable!(),
-                };
+                // Could be assignment: name = value, or just an expression (function call, etc.)
+                // We need to peek ahead to distinguish
+                // For now, parse as expression and it will handle function calls
+                let expr = self.parse_expression()?;
                 
-                self.advance(); // consume identifier
-                
-                if let Token::Assign = self.current {
-                    self.advance(); // consume '='
-                    let value = self.parse_expression()?;
-                    Ok(Stmt::Assign { name, value })
-                } else {
-                    // Not an assignment, parse as expression statement
-                    self.current = Token::Identifier(name); // backtrack
-                    let expr = self.parse_expression()?;
-                    Ok(Stmt::Expression(expr))
+                // Check if it's an assignment we just parsed
+                if let Expr::Identifier(name) = &expr {
+                    if let Token::Assign = self.current {
+                        self.advance(); // consume '='
+                        let value = self.parse_expression()?;
+                        return Ok(Stmt::Assign { name: name.clone(), value });
+                    }
                 }
+                
+                Ok(Stmt::Expression(expr))
             }
             _ => {
                 let expr = self.parse_expression()?;

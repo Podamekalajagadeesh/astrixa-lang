@@ -69,7 +69,10 @@ fn compile_with_modules(input_file: &str, output_file: &str) -> Result<(), Strin
     let mut parser = Parser::new(lexer);
     
     let main_ast = parser.parse()
-        .map_err(|e| format!("Parse error: {}", display_error(&e)))?;
+        .map_err(|e| {
+            display_error(e);
+            "Parse error".to_string()
+        })?;
     
     println!("✅ Main module parsed ({} top-level items)", main_ast.len());
     
@@ -82,7 +85,10 @@ fn compile_with_modules(input_file: &str, output_file: &str) -> Result<(), Strin
             println!("📦 Loading module: {}", module_name);
             
             let module = loader.load_module(module_name)
-                .map_err(|e| format!("Failed to load module '{}': {}", module_name, display_error(&e)))?;
+                .map_err(|e| {
+                    display_error(e.clone());
+                    format!("Failed to load module '{}'", module_name)
+                })?;
             
             println!("  ✅ Module '{}' loaded ({} items)", module_name, module.statements.len());
             

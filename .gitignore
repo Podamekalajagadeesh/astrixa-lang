@@ -1,0 +1,29 @@
+# Build artifacts
+**/target/
+**/node_modules/
+**/.cargo-lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dev notes (temporary)
+.dev-notes/
+
+# Compiled files (except test files)
+examples/*.wasm
+examples/*.wat
+*.wat.tmp
+
+# Logs
+*.log
+
+# Test artifacts
+**/test_output/

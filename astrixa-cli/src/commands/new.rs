@@ -14,7 +14,6 @@ pub fn create_project(name: &str, template: &str) -> Result<(), String> {
         return Err(format!("Directory '{}' already exists", name));
     }
     
-    // Get template
     let tmpl = templates::get_template(template)
         .ok_or_else(|| format!("Unknown template: {}", template))?;
     

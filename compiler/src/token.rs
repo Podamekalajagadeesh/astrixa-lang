@@ -1,21 +1,20 @@
 #[derive(Debug, Clone, PartialEq)]
 pub enum Token {
-    // Keywords
     Fn,
     Let,
     Return,
     If,
     Else,
     While,
-    Panic,  // STEP 48: Panic keyword
-    Import, // STEP 49: Module import
-    Export, // STEP 49: Module export
-    True,   // Boolean literal
-    False,  // Boolean literal
+    Panic,
+    Import,
+    Export,
+    True,
+    False,
 
     Identifier(String),
     Number(i64),
-    Float(f64),  // Float literal
+    Float(f64),
     String(String),
 
     LParen,
@@ -25,17 +24,15 @@ pub enum Token {
     Colon,
     Comma,
     Arrow,
-    Dot,    // STEP 49: Module access (math.add)
+    Dot,
 
-    // Operators
     Plus,
     Minus,
     Star,
     Slash,
-    Percent,  // Modulo operator %
-    Assign,  // =
+    Percent,
+    Assign,
     
-    // Comparison operators
     Greater,
     Less,
     GreaterEqual,

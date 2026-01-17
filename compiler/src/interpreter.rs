@@ -1,5 +1,5 @@
 use std::collections::{HashMap, HashSet};
-use crate::ast::{Expr, Stmt, Function, Contract};
+use crate::ast::{Expr, Stmt};
 use crate::lexer::Lexer;
 use crate::parser::Parser;
 use crate::ai_runtime::{AIRuntime, LocalAIRuntime};

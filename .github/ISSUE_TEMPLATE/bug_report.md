@@ -11,7 +11,7 @@ assignees: ''
 **Before submitting:**
 - [ ] I have searched for similar issues
 - [ ] I have checked the latest version
-- [ ] This is not a security vulnerability (use security@astrixa.dev)
+- [ ] This is not a security vulnerability (use [GitHub Security Advisories](https://github.com/Podamekalajagadeesh/astrixa-lang/security/advisories/new))
 
 ---
 

@@ -1,3 +1,6 @@
+use std::env;
+use std::fs;
+
 mod lexer;
 mod parser;
 mod token;
@@ -22,12 +25,26 @@ use opt::optimize_module;
 use codegen::wasm;
 
 fn main() {
-    let source = r#"
+    let args: Vec<String> = env::args().collect();
+    
+    let (source, input_file) = if args.len() > 1 {
+        // Read from file if provided
+        match fs::read_to_string(&args[1]) {
+            Ok(content) => (content, Some(args[1].clone())),
+            Err(e) => {
+                eprintln!("Error reading file '{}': {}", args[1], e);
+                std::process::exit(1);
+            }
+        }
+    } else {
+        // Default hardcoded example
+        (r#"
         fn greet {
         }
-    "#;
+    "#.to_string(), None)
+    };
 
-    let lexer = Lexer::new(source);
+    let lexer = Lexer::new(&source);
     let mut parser = Parser::new(lexer);
 
     match parser.parse() {
@@ -61,6 +78,19 @@ fn main() {
                     let wasm_module = wasm::generate_wasm_module(&optimized_ir);
                     println!("  Generated WebAssembly (WAT format):\n");
                     println!("{}", wasm_module);
+                    
+                    // Save output file if input was provided
+                    if let Some(input) = input_file {
+                        let output = input.replace(".ax", ".wat");
+                        match fs::write(&output, &wasm_module) {
+                            Ok(_) => {
+                                println!("\n💾 WASM saved to: {}", output);
+                            }
+                            Err(e) => {
+                                eprintln!("Error writing output file: {}", e);
+                            }
+                        }
+                    }
                 }
                 Err(errors) => {
                     println!("❌ Type check failed:");

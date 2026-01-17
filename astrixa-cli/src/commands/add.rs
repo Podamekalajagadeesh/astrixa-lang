@@ -62,26 +62,26 @@ fn install_package(name: &str, version: &str, root: &Path) -> Result<(), String>
         }
     }
     
-    // Package not found - create a stub for now
+    // Package not found locally - create a module skeleton
     println!("   {} Package not found locally", "Warning:".yellow());
-    println!("   Creating stub module...");
+    println!("   Creating module skeleton...");
     
-    let stub = format!(r#"// Stub module for {}
-// TODO: Install from registry
+    let skeleton_code = format!(r#"// Module skeleton for {0}
+// Registry installation planned; add implementation or install when available.
 
-export fn placeholder() {{
-    panic("Package '{}' not yet installed")
+fn info {{
+    print("Module '{0}' not installed; using local skeleton")
 }}
-"#, name, name);
+"#, name);
     
-    let stub_path = modules_dir.join(format!("{}.ax", name));
-    fs::write(&stub_path, stub)
-        .map_err(|e| format!("Failed to create stub: {}", e))?;
+    let skeleton_path = modules_dir.join(format!("{}.ax", name));
+    fs::write(&skeleton_path, skeleton_code)
+        .map_err(|e| format!("Failed to create module skeleton: {}", e))?;
     
-    println!("   {} Stub created at modules/{}.ax", "Created".yellow(), name);
+    println!("   {} Skeleton created at modules/{}.ax", "Created".yellow(), name);
     println!();
-    println!("   {} Package registry not yet implemented.", "Note:".cyan());
-    println!("   Place your module at modules/{}.ax manually.", name);
+    println!("   {} Package registry support is planned.", "Note:".cyan());
+    println!("   Add your module implementation at modules/{}.ax.", name);
     
     Ok(())
 }

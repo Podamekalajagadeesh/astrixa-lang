@@ -188,7 +188,7 @@ See [CHANGELOG.md](CHANGELOG.md) for full details.
 ## 🛠️ Technical Details
 
 - **Written in**: Rust
-- **License**: MIT OR Apache-2.0
+- **License**: MIT
 - **Platforms**: Linux, macOS, Windows
 - **Architecture**: x86_64, aarch64
 

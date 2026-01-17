@@ -78,25 +78,25 @@ pub fn generate_wasm_module(module: &IRModule) -> String {
     // Module header
     wasm.push_str("(module\n");
     
-    // Export memory (1 page = 64KB, should be enough for now)
-    wasm.push_str("  (memory (export \"memory\") 1)\n\n");
-    
-    // Add data section if there are strings
-    let data_section = allocator.get_data_section();
-    if !data_section.is_empty() {
-        wasm.push_str(&data_section);
-        wasm.push_str("\n");
-    }
-    
-    // Collect all stdlib imports needed
+    // Collect all stdlib imports needed (MUST come before memory and data)
     let imports = collect_stdlib_imports(module);
     
-    // Generate imports
+    // Generate imports first (WASM requires imports to come first)
     for import in &imports {
         wasm.push_str(&generate_import(import));
     }
     
     if !imports.is_empty() {
+        wasm.push_str("\n");
+    }
+    
+    // Export memory (1 page = 64KB, should be enough for now)
+    wasm.push_str("  (memory (export \"memory\") 1)\n\n");
+    
+    // Add data section if there are strings (comes after memory definition)
+    let data_section = allocator.get_data_section();
+    if !data_section.is_empty() {
+        wasm.push_str(&data_section);
         wasm.push_str("\n");
     }
     
@@ -143,6 +143,10 @@ fn collect_stdlib_imports(module: &IRModule) -> HashSet<String> {
                 }
                 IRInstr::CallWeb3(name) => {
                     // STEP 53: Collect Web3 function imports
+                    imports.insert(name.clone());
+                }
+                IRInstr::CallFS(name) => {
+                    // STEP 54: Collect file system function imports
                     imports.insert(name.clone());
                 }
                 IRInstr::Panic => {
@@ -250,6 +254,17 @@ fn generate_import(func_name: &str) -> String {
         }
         "web3.send" => {
             "  (import \"env\" \"web3_send\" (func $web3_send (param i32 i32) (result i32)))\n".to_string()
+        }
+        
+        // STEP 54: File system functions
+        "fs.read" => {
+            "  (import \"env\" \"fs_read\" (func $fs_read (param i32 i32) (result i32)))\n".to_string()
+        }
+        "fs.write" => {
+            "  (import \"env\" \"fs_write\" (func $fs_write (param i32 i32 i32 i32) (result i32)))\n".to_string()
+        }
+        "fs.delete" => {
+            "  (import \"env\" \"fs_delete\" (func $fs_delete (param i32 i32) (result i32)))\n".to_string()
         }
         
         _ => {
@@ -438,6 +453,13 @@ fn generate_body(instrs: &[IRInstr], allocator: &MemoryAllocator) -> String {
             // STEP 53: Web3 calls
             IRInstr::CallWeb3(func_name) => {
                 // Sanitize Web3 function names (web3.wallet -> web3_wallet)
+                let wasm_func_name = func_name.replace('.', "_");
+                body.push_str(&format!("    call ${}\n", wasm_func_name));
+            }
+            
+            // STEP 54: File system calls
+            IRInstr::CallFS(func_name) => {
+                // Sanitize FS function names (fs.read -> fs_read)
                 let wasm_func_name = func_name.replace('.', "_");
                 body.push_str(&format!("    call ${}\n", wasm_func_name));
             }

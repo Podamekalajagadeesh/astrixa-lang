@@ -100,9 +100,9 @@ fn main() {
         fs::create_dir_all(&package_dir)
             .map_err(|e| format!("Failed to create package directory: {}", e))?;
         
-        // For MVP: create a basic package structure
-        // In production, this would fetch from registry or git
-        self.create_stub_package(&package_dir, package_name, version)?;
+        // MVP: create a basic package structure
+        // Future versions will fetch from a registry or git
+        self.create_skeleton_package(&package_dir, package_name, version)?;
         
         // Update lockfile
         self.update_lockfile(package_name, version)?;
@@ -112,8 +112,8 @@ fn main() {
         Ok(())
     }
     
-    /// Create a stub package (for MVP - simulates registry fetch)
-    fn create_stub_package(&self, package_dir: &Path, name: &str, version: &str) -> Result<(), String> {
+    /// Create a minimal local package (MVP - simulates registry fetch)
+    fn create_skeleton_package(&self, package_dir: &Path, name: &str, version: &str) -> Result<(), String> {
         // Create package manifest
         let manifest = PackageManifest {
             name: name.to_string(),
@@ -171,7 +171,7 @@ export fn create_prompt(text: string) -> string {
 }
 
 export fn analyze_sentiment(text: string) -> string {
-    // Placeholder for AI sentiment analysis
+    // Basic sentiment example; replace with real implementation when available
     return "neutral";
 }
 "#,

@@ -1,13 +1,12 @@
 // ASTRIXA Bytecode Compiler: AST → Bytecode
 
-use crate::ast::{Expr, Stmt, Function, Contract};
+use crate::ast::{Expr, Stmt};
 use crate::bytecode::{OpCode, Instruction};
 use std::collections::HashMap;
 
 pub struct Compiler {
     pub instructions: Vec<Instruction>,
     functions: HashMap<String, Vec<Instruction>>,
-    contracts: HashMap<String, Contract>,
     locals: Vec<HashMap<String, usize>>,
     mode: String,  // "native", "contract", "wasm", "web"
 }
@@ -17,7 +16,6 @@ impl Compiler {
         Compiler {
             instructions: Vec::new(),
             functions: HashMap::new(),
-            contracts: HashMap::new(),
             locals: vec![HashMap::new()],
             mode: "native".to_string(),
         }
@@ -32,18 +30,11 @@ impl Compiler {
     }
 
     pub fn compile(&mut self, program: Vec<Stmt>) -> Result<Vec<Instruction>, String> {
-        // First pass: collect all functions and contracts
+        // First pass: collect all functions
         for stmt in &program {
             match stmt {
-                Stmt::Function(func) => {
-                    self.compile_function(func.clone())?;
-                }
-                Stmt::Contract(contract) => {
-                    self.contracts.insert(contract.name.clone(), contract.clone());
-                    // Compile contract functions
-                    for func in &contract.functions {
-                        self.compile_function(func.clone())?;
-                    }
+                Stmt::Function { name, params, body, .. } => {
+                    self.compile_function(name.clone(), params.clone(), body.clone())?;
                 }
                 _ => {}
             }
@@ -52,9 +43,8 @@ impl Compiler {
         // Second pass: compile main and imports
         for stmt in program {
             match stmt {
-                Stmt::Function(_) => {} // Already compiled
-                Stmt::Contract(_) => {} // Already compiled
-                Stmt::Import(module) => {
+                Stmt::Function { .. } => {} // Already compiled
+                Stmt::Import(_module) => {
                     // Imports are handled at runtime
                 }
                 _ => {
@@ -66,7 +56,7 @@ impl Compiler {
         Ok(self.instructions.clone())
     }
 
-    fn compile_function(&mut self, func: Function) -> Result<(), String> {
+    fn compile_function(&mut self, name: String, params: Vec<String>, body: Vec<Stmt>) -> Result<(), String> {
         let mut func_instructions = Vec::new();
         
         // Save current state
@@ -75,12 +65,12 @@ impl Compiler {
         self.locals.push(HashMap::new());
 
         // Add parameters to local scope
-        for (i, param) in func.params.iter().enumerate() {
+        for (i, param) in params.iter().enumerate() {
             self.locals.last_mut().unwrap().insert(param.clone(), i);
         }
 
         // Compile function body
-        for stmt in func.body {
+        for stmt in body {
             self.compile_stmt(stmt)?;
         }
 
@@ -94,7 +84,7 @@ impl Compiler {
         self.locals.pop();
         self.instructions = saved_instructions;
 
-        self.functions.insert(func.name, func_instructions);
+        self.functions.insert(name, func_instructions);
         Ok(())
     }
 
@@ -122,25 +112,27 @@ impl Compiler {
                 self.emit(OpCode::Return, None);
                 Ok(())
             }
-            Stmt::If { condition, then_branch, else_branch } => {
+            Stmt::If { condition, then_body, else_body } => {
                 self.compile_expr(condition)?;
                 let jump_if_false_addr = self.instructions.len();
-                self.emit(OpCode::JumpIfFalse, Some("0".to_string())); // Placeholder
+                self.emit(OpCode::JumpIfFalse, Some("0".to_string())); // Patched to real address below
 
                 // Compile then branch
-                for stmt in then_branch {
+                for stmt in then_body {
                     self.compile_stmt(stmt)?;
                 }
 
                 let jump_addr = self.instructions.len();
-                self.emit(OpCode::Jump, Some("0".to_string())); // Placeholder
+                self.emit(OpCode::Jump, Some("0".to_string())); // Patched to real address below
 
                 // Patch jump_if_false
                 self.instructions[jump_if_false_addr].operand = Some(self.instructions.len().to_string());
 
                 // Compile else branch
-                for stmt in else_branch {
-                    self.compile_stmt(stmt)?;
+                if let Some(else_b) = else_body {
+                    for stmt in else_b {
+                        self.compile_stmt(stmt)?;
+                    }
                 }
 
                 // Patch jump
@@ -153,7 +145,7 @@ impl Compiler {
 
                 self.compile_expr(condition)?;
                 let jump_if_false_addr = self.instructions.len();
-                self.emit(OpCode::JumpIfFalse, Some("0".to_string())); // Placeholder
+                self.emit(OpCode::JumpIfFalse, Some("0".to_string())); // Patched to exit address below
 
                 for stmt in body {
                     self.compile_stmt(stmt)?;
@@ -166,16 +158,16 @@ impl Compiler {
 
                 Ok(())
             }
-            Stmt::Function(_) => {
+            Stmt::Function { .. } => {
                 // Functions are compiled separately
-                Ok(())
-            }
-            Stmt::Contract(_) => {
-                // Contracts are compiled separately
                 Ok(())
             }
             Stmt::Import(_) => {
                 // Imports are handled at runtime
+                Ok(())
+            }
+            Stmt::Panic(_) => {
+                // Panic statements are handled at runtime
                 Ok(())
             }
         }
@@ -183,15 +175,19 @@ impl Compiler {
 
     fn compile_expr(&mut self, expr: Expr) -> Result<(), String> {
         match expr {
-            Expr::NumberLiteral(n) => {
+            Expr::Number(n) => {
                 self.emit(OpCode::LoadConst, Some(n.to_string()));
                 Ok(())
             }
-            Expr::StringLiteral(s) => {
+            Expr::Float(f) => {
+                self.emit(OpCode::LoadConst, Some(f.to_string()));
+                Ok(())
+            }
+            Expr::String(s) => {
                 self.emit(OpCode::LoadConst, Some(format!("\"{}\"", s)));
                 Ok(())
             }
-            Expr::BoolLiteral(b) => {
+            Expr::Bool(b) => {
                 self.emit(OpCode::LoadConst, Some(b.to_string()));
                 Ok(())
             }
@@ -199,50 +195,56 @@ impl Compiler {
                 self.emit(OpCode::LoadVar, Some(name));
                 Ok(())
             }
-            Expr::Property { object, property } => {
-                // Emit a special load that references Web3 properties
-                self.emit(OpCode::LoadVar, Some(format!("{}.{}", object, property)));
-                Ok(())
-            }
-            Expr::AICall { method, args } => {
-                // Push arguments for AI call
-                for arg in args {
-                    self.compile_expr(arg)?;
-                }
-                // Emit a special AI call opcode with method name and arg count
-                self.emit(OpCode::Call, Some(format!("ai.{}", method)));
-                Ok(())
-            }
-            Expr::ArrayLiteral(items) => {
-                for item in &items {
-                    self.compile_expr(item.clone())?;
-                }
-                self.emit(OpCode::Array, Some(items.len().to_string()));
-                Ok(())
-            }
-            Expr::Binary { left, operator, right } => {
+            Expr::Add(left, right) | Expr::Sub(left, right) | 
+            Expr::Mul(left, right) | Expr::Div(left, right) | Expr::Mod(left, right) => {
                 self.compile_expr(*left)?;
                 self.compile_expr(*right)?;
 
-                let opcode = match operator.as_str() {
-                    "+" => OpCode::Add,
-                    "-" => OpCode::Sub,
-                    "*" => OpCode::Mul,
-                    "/" => OpCode::Div,
-                    ">" => OpCode::Greater,
-                    "<" => OpCode::Less,
-                    _ => return Err(format!("Unknown operator: {}", operator)),
+                let opcode = match &expr {
+                    Expr::Add(_, _) => OpCode::Add,
+                    Expr::Sub(_, _) => OpCode::Sub,
+                    Expr::Mul(_, _) => OpCode::Mul,
+                    Expr::Div(_, _) => OpCode::Div,
+                    Expr::Mod(_, _) => OpCode::Mod,
+                    _ => unreachable!(),
                 };
 
                 self.emit(opcode, None);
                 Ok(())
             }
-            Expr::Call { name, args } => {
+            Expr::Eq(left, right) | Expr::Ne(left, right) |
+            Expr::Lt(left, right) | Expr::Le(left, right) |
+            Expr::Gt(left, right) | Expr::Ge(left, right) => {
+                self.compile_expr(*left)?;
+                self.compile_expr(*right)?;
+
+                let opcode = match &expr {
+                    Expr::Eq(_, _) => OpCode::Equal,
+                    Expr::Ne(_, _) => OpCode::NotEqual,
+                    Expr::Lt(_, _) => OpCode::Less,
+                    Expr::Le(_, _) => OpCode::LessEqual,
+                    Expr::Gt(_, _) => OpCode::Greater,
+                    Expr::Ge(_, _) => OpCode::GreaterEqual,
+                    _ => unreachable!(),
+                };
+
+                self.emit(opcode, None);
+                Ok(())
+            }
+            Expr::Call(name, args) => {
                 // Push arguments
                 for arg in args {
                     self.compile_expr(arg)?;
                 }
                 self.emit(OpCode::Call, Some(name));
+                Ok(())
+            }
+            Expr::ModuleCall(module, func, args) => {
+                // Push arguments
+                for arg in args {
+                    self.compile_expr(arg)?;
+                }
+                self.emit(OpCode::Call, Some(format!("{}.{}", module, func)));
                 Ok(())
             }
         }

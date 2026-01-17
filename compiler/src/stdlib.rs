@@ -18,6 +18,7 @@ pub enum StdlibCategory {
     Time,      // Time functions: time, sleep
     Crypto,    // Web3 crypto: hash, keccak, sha256
     String,    // String operations: len, concat, substr
+    FileSystem, // File operations: fs.read, fs.write, fs.delete
     AI,        // STEP 52: AI-native functions: generate, embed, classify
 }
 
@@ -34,6 +35,15 @@ pub struct StdlibFunction {
 /// Check if a function name is a standard library function
 pub fn is_stdlib(name: &str) -> bool {
     STDLIB_FUNCTIONS.iter().any(|f| f.name == name)
+}
+
+/// Check if a function is a filesystem function
+pub fn is_fs_function(name: &str) -> bool {
+    matches!(name,
+        "fs.read" |
+        "fs.write" |
+        "fs.delete"
+    )
 }
 
 /// STEP 52: Check if a function is an AI function
@@ -222,7 +232,33 @@ pub static STDLIB_FUNCTIONS: &[StdlibFunction] = &[
         description: "Classify text into categories",
         param_count: 1,
         return_type: "string",
-    },];
+    },
+    
+    // ==========================================
+    // FILE SYSTEM FUNCTIONS (with security)
+    // ==========================================
+    StdlibFunction {
+        name: "fs.read",
+        category: StdlibCategory::FileSystem,
+        description: "Read file contents (requires FS_READ capability)",
+        param_count: 1,
+        return_type: "string",
+    },
+    StdlibFunction {
+        name: "fs.write",
+        category: StdlibCategory::FileSystem,
+        description: "Write file contents (requires FS_WRITE capability)",
+        param_count: 2,
+        return_type: "int",
+    },
+    StdlibFunction {
+        name: "fs.delete",
+        category: StdlibCategory::FileSystem,
+        description: "Delete file (requires FS_DELETE capability)",
+        param_count: 1,
+        return_type: "int",
+    },
+];
 
 /// Generate human-readable documentation for stdlib
 pub fn generate_docs() -> String {

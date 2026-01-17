@@ -9,8 +9,13 @@ pub enum OpCode {
     Sub,            // Pop 2, subtract, push result
     Mul,            // Pop 2, multiply, push result
     Div,            // Pop 2, divide, push result
+    Mod,            // Pop 2, modulo, push result
+    Equal,          // Pop 2, check equality, push bool
+    NotEqual,       // Pop 2, check inequality, push bool
     Greater,        // Pop 2, compare, push bool
     Less,           // Pop 2, compare, push bool
+    GreaterEqual,   // Pop 2, compare, push bool
+    LessEqual,      // Pop 2, compare, push bool
     JumpIfFalse,    // Pop stack, if false jump (operand: instruction index)
     Jump,           // Unconditional jump (operand: instruction index)
     Call,           // Call function (operand: function name)

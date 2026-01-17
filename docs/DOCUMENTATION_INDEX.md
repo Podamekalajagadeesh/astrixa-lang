@@ -2,69 +2,54 @@
 
 ## 🚀 Getting Started
 
-1. **[START_HERE.md](START_HERE.md)** - Project overview and quick start
-2. **[README.md](README.md)** - Repository introduction
-3. **[WHY_ASTRIXA.md](WHY_ASTRIXA.md)** - Why ASTRIXA beats everything else
+1. **[../README.md](../README.md)** - Main repository introduction
+2. **[intro.md](intro.md)** - Introduction to ASTRIXA (10-minute primer)
+3. **[installation.md](installation.md)** - Installation and setup instructions
+4. **[../EXAMPLES.md](../EXAMPLES.md)** - Code examples with outputs
 
 ---
 
 ## 📚 Core Documentation
 
+### ⭐ New: Feature Status & Type System (Start Here!)
+- **[STATUS_REFERENCE.md](STATUS_REFERENCE.md)** - **What works, what doesn't** (feature status checklist)
+- **[TYPE_SYSTEM_CONSOLIDATED.md](TYPE_SYSTEM_CONSOLIDATED.md)** - **Complete type system guide** (replaces fragmented docs)
+
+### Type System (Detailed References)
+- **[../README_TYPE_SYSTEM.md](../README_TYPE_SYSTEM.md)** - Type system documentation guide
+- **[../TYPE_SYSTEM_REFERENCE.md](../TYPE_SYSTEM_REFERENCE.md)** - Quick lookup of type rules
+- **[../TYPE_SYSTEM_ARCHITECTURE.md](../TYPE_SYSTEM_ARCHITECTURE.md)** - Implementation internals
+- **[../TYPE_SYSTEM_TESTING.md](../TYPE_SYSTEM_TESTING.md)** - Type system test guide
+
 ### Web3 & Blockchain
-- **[WEB3_COMPLETE_GUIDE.md](WEB3_COMPLETE_GUIDE.md)** - Comprehensive Web3 guide (2000+ lines)
-  - Quick start
-  - Smart contracts
-  - Blockchain context
-  - Advanced features
-  - Security best practices
-  - Full API reference
-
-- **[WEB3_QUICK_REFERENCE.md](WEB3_QUICK_REFERENCE.md)** - Quick reference card
-  - Common patterns
-  - Code snippets
-  - CLI commands
-  - Types and utilities
-
-- **[WEB_WEB3_SUMMARY.md](WEB_WEB3_SUMMARY.md)** - Implementation summary
-  - What was built
-  - Architecture overview
-  - Success metrics
-
-- **[WEB_WEB3_IMPLEMENTATION_COMPLETE.md](WEB_WEB3_IMPLEMENTATION_COMPLETE.md)** - Detailed implementation report
 
 ### AI Features
-- **[AI_COMPLETE_GUIDE.md](AI_COMPLETE_GUIDE.md)** - Complete AI integration guide
 - **[AI_PRIMITIVES.md](AI_PRIMITIVES.md)** - AI primitive operations
-- **[AI_IMPLEMENTATION_SUMMARY.md](AI_IMPLEMENTATION_SUMMARY.md)** - AI implementation details
+- **[../docs/stdlib/ai.md](stdlib/ai.md)** - AI standard library reference
+
+### Language Features
+- **[../TYPE_SYSTEM.md](../TYPE_SYSTEM.md)** - Complete type system
+- **[language/syntax.md](language/syntax.md)** - Language syntax reference
+- **[language/types.md](language/types.md)** - Type declarations and usage
+- **[language/async.md](language/async.md)** - Asynchronous programming
+- **[language/modules.md](language/modules.md)** - Module system
+- **[language/errors.md](language/errors.md)** - Error handling
 
 ### Language Server Protocol (LSP)
-- **[LSP_COMPLETE.md](LSP_COMPLETE.md)** - Complete LSP implementation
 - **[LSP_QUICKSTART.md](LSP_QUICKSTART.md)** - Quick start with LSP
-- **[LSP_INDEX.md](LSP_INDEX.md)** - LSP documentation index
-- **[LSP_IMPLEMENTATION_SUMMARY.md](LSP_IMPLEMENTATION_SUMMARY.md)** - Implementation details
-- **[lsp/LSP_GUIDE.md](lsp/LSP_GUIDE.md)** - Comprehensive LSP guide
+- **[../lsp/LSP_GUIDE.md](../lsp/LSP_GUIDE.md)** - Comprehensive LSP guide
+- **[../lsp/README.md](../lsp/README.md)** - LSP implementation details
 
 ### Standard Library
-- **[STDLIB_COMPLETE_REFERENCE.md](STDLIB_COMPLETE_REFERENCE.md)** - Complete stdlib reference
+- **[stdlib/ai.md](stdlib/ai.md)** - AI operations
+- **[stdlib/web3.md](stdlib/web3.md)** - Web3 operations
+- **[stdlib/web.md](stdlib/web.md)** - Web server framework
 - **[STDLIB_QUICKSTART.md](STDLIB_QUICKSTART.md)** - Quick start guide
-- **[stdlib/](stdlib/)** - Standard library implementations
-  - `ai.ax` - AI operations
-  - `web3.ax` - Web3 operations (NEW - 500+ lines)
-  - `web.ax` - Web server
-  - `crypto.ax` - Cryptography
-  - `json.ax` - JSON handling
-  - `async.ax` - Async operations
-  - `fs.ax` - File system
-  - `io.ax` - I/O operations
-  - `net.ax` - Networking
+- **[../stdlib/](../stdlib/)** - Standard library source code
 
 ### Package Manager
-- **[PACKAGE_MANAGER_COMPLETE.md](PACKAGE_MANAGER_COMPLETE.md)** - Complete package manager
-- **[PACKAGE_MANAGER_TUTORIAL.md](PACKAGE_MANAGER_TUTORIAL.md)** - Tutorial
-- **[PACKAGE_MANAGER_USAGE.md](PACKAGE_MANAGER_USAGE.md)** - Usage guide
-- **[PACKAGE_MANAGER_SUMMARY.md](PACKAGE_MANAGER_SUMMARY.md)** - Summary
-- **[PACKAGE_MANAGER_INDEX.md](PACKAGE_MANAGER_INDEX.md)** - Index
-- **[PACKAGE_MANAGER_IMPLEMENTATION.md](PACKAGE_MANAGER_IMPLEMENTATION.md)** - Implementation
+- **[PACKAGE_MANAGER.md](PACKAGE_MANAGER.md)** - Package manager guide
+- **[PACKAGE_MANAGER_TUTORIAL.md](PACKAGE_MANAGER_TUTORIAL.md)** - Step-by-step tutorial
 
 ### CLI Reference
 - **[CLI_REFERENCE.md](CLI_REFERENCE.md)** - Command-line interface reference
@@ -197,7 +182,7 @@
   - Bug bounty (coming v1.0)
 
 ### Legal
-- **[LICENSE](LICENSE)** - Apache 2.0 license (NEW)
+- **[LICENSE](LICENSE)** - MIT license
   - Business-friendly
   - Patent protection
   - Contributor rights

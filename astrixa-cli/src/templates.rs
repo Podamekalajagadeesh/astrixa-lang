@@ -1,5 +1,3 @@
-// STEP 50: Project Templates
-
 pub struct Template {
     pub name: &'static str,
     pub description: &'static str,

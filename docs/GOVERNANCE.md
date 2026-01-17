@@ -257,7 +257,7 @@ See [RFC_PROCESS.md](./rfcs/RFC_PROCESS.md) for complete details.
 **DO NOT** create public issues for security vulnerabilities.
 
 **Instead:**
-1. Email: security@astrixa.dev
+1. Use [GitHub Security Advisories](https://github.com/Podamekalajagadeesh/astrixa-lang/security/advisories/new)
 2. Include: Description, reproduction steps, impact
 3. Response time: 48 hours
 4. Fix timeline: 30 days for critical, 90 days for others
@@ -298,7 +298,7 @@ See [RFC_PROCESS.md](./rfcs/RFC_PROCESS.md) for complete details.
 ### Copyright
 
 **All contributions:**
-- Licensed under Apache 2.0
+- Licensed under MIT
 - Copyright retained by contributors
 - Contributor License Agreement (CLA) required
 
@@ -349,11 +349,10 @@ See [RFC_PROCESS.md](./rfcs/RFC_PROCESS.md) for complete details.
 
 ### Official Channels
 
-- **GitHub:** Code, issues, RFCs
-- **Discord:** Real-time discussion
-- **Forum:** Long-form discussion (coming soon)
-- **Twitter:** Announcements
-- **Blog:** Major updates, tutorials
+- **GitHub:** Code, issues, RFCs, discussions
+- **GitHub Discussions:** Community Q&A and proposals
+- **GitHub Issues:** Bug reports and feature requests
+- **GitHub Pull Requests:** Code contributions
 
 ### Core Team Meetings
 

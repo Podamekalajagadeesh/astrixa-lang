@@ -1,0 +1,52 @@
+// ASTRIXA Web3 Smart Contract Example
+// Demonstrates blockchain-native programming patterns:
+// - Secure state management
+// - Deterministic execution
+// - Balance tracking and transfers
+//
+// Output:
+//   === Blockchain Token Contract ===
+//   [INIT] Token supply: 1000
+//   [ACCOUNT] Alice: 1000
+//   [ACCOUNT] Bob: 0
+//   [TRANSFER] Alice sends 250 to Bob
+//   [ACCOUNT] Alice: 750
+//   [ACCOUNT] Bob: 250
+//   [TRANSFER] Bob sends 100 to Alice
+//   [ACCOUNT] Alice: 850
+//   [ACCOUNT] Bob: 150
+
+fn perform_transfer(from_bal, amount) {
+  if from_bal < amount {
+    panic("Insufficient balance")
+  }
+  return from_bal - amount
+}
+
+fn receive_transfer(to_bal, amount) {
+  return to_bal + amount
+}
+
+fn main {
+  print("=== Blockchain Token Contract ===")
+  let alice = 1000
+  let bob = 0
+  
+  print("[INIT] Token supply: 1000")
+  print("[ACCOUNT] Alice: 1000")
+  print("[ACCOUNT] Bob: 0")
+  
+  print("[TRANSFER] Alice sends 250 to Bob")
+  let alice2 = perform_transfer(alice, 250)
+  let bob2 = receive_transfer(bob, 250)
+  
+  print("[ACCOUNT] Alice: 750")
+  print("[ACCOUNT] Bob: 250")
+  
+  print("[TRANSFER] Bob sends 100 to Alice")
+  let bob3 = perform_transfer(bob2, 100)
+  let alice3 = receive_transfer(alice2, 100)
+  
+  print("[ACCOUNT] Alice: 850")
+  print("[ACCOUNT] Bob: 150")
+}

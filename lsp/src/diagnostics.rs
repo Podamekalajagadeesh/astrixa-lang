@@ -258,8 +258,7 @@ impl DiagnosticsEngine {
             
             // Unused imports
             if trimmed.starts_with("import ") {
-                // Future: track if import is used
-                // For now, this is a placeholder
+                // Future enhancement: track import usage for unused import hints
             }
 
             // Long function detection

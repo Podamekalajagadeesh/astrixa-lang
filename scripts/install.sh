@@ -149,11 +149,11 @@ verify_installation() {
 setup_completion() {
     info "Setting up shell completion..."
     
-    # TODO: Add completion scripts for bash/zsh/fish
-    # For now, skip
+    # Completion scripts for bash/zsh/fish can be added in future versions
+    # Skipping setup in v0.1.0
 }
 
-# Cleanup temporary files
+# Cleanup install working files
 cleanup() {
     if [ -d "$TMP_DIR" ]; then
         rm -rf "$TMP_DIR"

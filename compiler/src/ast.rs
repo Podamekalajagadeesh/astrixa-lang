@@ -34,7 +34,7 @@ pub enum Expr {
     Ge(Box<Expr>, Box<Expr>),
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum Stmt {
     Import(String),    // STEP 49: import module_name
     Function {

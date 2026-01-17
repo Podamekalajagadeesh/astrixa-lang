@@ -1,89 +1,73 @@
 # Installation
 
-Get ASTRIXA running on your machine in under a minute.
+Get ASTRIXA running on your machine in 5-10 minutes.
 
-## Quick Install (Recommended)
+## Quick Start Options
 
-### macOS / Linux
+### ⚡ Option 1: Try in Browser (No Installation)
 
-Open your terminal and run:
+The fastest way to explore ASTRIXA:
 
-```bash
-curl -fsSL https://astrixa.org/install | sh
+```
+Open: examples/playground.html in your browser
 ```
 
-This will:
-- Download the latest ASTRIXA compiler
-- Install it to `/usr/local/bin/astrixa`
-- Add it to your PATH
-- Verify the installation
+Write and run code instantly without installing anything.
 
-### Windows
+---
 
-Download the installer from [astrixa.org/download](https://astrixa.org/download) and run it.
-
-Or use PowerShell:
-```powershell
-iwr https://astrixa.org/install.ps1 -useb | iex
-```
-
-## Manual Installation
+## Build from Source (Recommended)
 
 ### Prerequisites
 
-- **Rust toolchain** (for building from source)
-- **Git** (for cloning the repository)
+- **Rust 1.70+** - [Install Rust](https://rustup.rs/)
+- **Git** - [Install Git](https://git-scm.com/)
+- **Node.js 16+** - [Install Node.js](https://nodejs.org/) (needed to run compiled WASM)
 
-### Build from Source
+### Installation Steps
 
-1. Clone the repository:
+1. **Clone the repository:**
 ```bash
 git clone https://github.com/Podamekalajagadeesh/astrixa-lang.git
 cd astrixa-lang
 ```
 
-2. Build the compiler:
+2. **Build the compiler:**
 ```bash
 cd compiler
 cargo build --release
+cd ..
 ```
 
-3. Add to PATH:
+⏱️ *This takes 3-5 minutes on first build.*
+
+3. **Verify installation:**
 ```bash
-# Linux/macOS
-export PATH="$PATH:$(pwd)/target/release"
-
-# Or install globally
-sudo cp target/release/astrixa /usr/local/bin/
-```
-
-4. Verify installation:
-```bash
-astrixa --version
-```
-
-## Verify Installation
-
-Check that ASTRIXA is correctly installed:
-
-```bash
-astrixa --version
+./compiler/target/release/astrixa --version
 # Output: astrixa 0.1.0
 ```
 
-Run a simple program:
-
+4. **Compile and run your first program:**
 ```bash
-echo 'print("Hello, ASTRIXA!")' > hello.ax
-astrixa hello.ax
-# Output: Hello, ASTRIXA!
+./compiler/target/release/astrixa examples/hello.ax -o examples/hello.wasm
+node runtime/run.js examples/hello.wasm
 ```
+
+**Expected Output:**
+```
+🚀 ASTRIXA Runtime - Executing WASM
+Hello, ASTRIXA!
+Welcome to Web3 Smart Contracts with AI
+✅ Program completed (exit code: 0)
+```
+
+---
 
 ## IDE Support
 
 ### Visual Studio Code
 
-Install the official ASTRIXA extension:
+Install the official ASTRIXA VS Code extension for syntax highlighting and code completion:
 
 1. Open VS Code
 2. Go to Extensions (Ctrl+Shift+X / Cmd+Shift+X)
@@ -92,122 +76,41 @@ Install the official ASTRIXA extension:
 
 **Features:**
 - Syntax highlighting
-- Code completion
+- Code completion  
 - Error diagnostics
 - Hover documentation
-- Go to definition
 
-### Language Server (LSP)
+### Language Server Protocol (LSP)
 
-ASTRIXA includes a Language Server Protocol implementation for any LSP-compatible editor.
+For other LSP-compatible editors, build the language server:
 
-Build the LSP server:
 ```bash
 cd lsp
 cargo build --release
 ```
 
-Configure your editor to use `target/release/astrixa-lsp`.
+Then configure your editor to use the LSP binary at `lsp/target/release/astrixa-lsp`.
 
-## Package Manager
+---
+
+## Creating Your First Project
 
 Initialize a new ASTRIXA project:
 
 ```bash
-mkdir my-project
-cd my-project
-astrixa init
+mkdir my-first-app
+cd my-first-app
 ```
 
-This creates an `astrixa.toml` file for managing dependencies.
+Create `main.ax`:
+```astrixa
+fn main {
+  print("Hello from ASTRIXA!")
+}
+```
 
-Install packages:
+Compile and run:
 ```bash
-astrixa install <package-name>
+../astrixa main.ax -o main.wasm
+node ../runtime/run.js main.wasm
 ```
-
-See [Package Manager Guide](../PACKAGE_MANAGER.md) for more details.
-
-## WebAssembly Playground
-
-Try ASTRIXA in your browser without installing anything:
-
-👉 **[playground.astrixa.org](https://playground.astrixa.org)**
-
-- Write code instantly
-- See syntax highlighting
-- Get immediate feedback
-- Share code snippets
-
-## Troubleshooting
-
-### Command not found: astrixa
-
-The installation directory is not in your PATH. Add it manually:
-
-```bash
-# Linux/macOS (add to ~/.bashrc or ~/.zshrc)
-export PATH="$PATH:/usr/local/bin"
-```
-
-### Permission denied
-
-The installer needs sudo access to write to `/usr/local/bin`. Run:
-
-```bash
-sudo chown -R $(whoami) /usr/local/bin
-```
-
-Or install to a user directory:
-```bash
-mkdir -p ~/.local/bin
-cp astrixa ~/.local/bin/
-export PATH="$PATH:~/.local/bin"
-```
-
-### Rust not installed
-
-If building from source, install Rust first:
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
-
-## Updating ASTRIXA
-
-To update to the latest version:
-
-```bash
-curl -fsSL https://astrixa.org/install | sh
-```
-
-Or if installed from source:
-```bash
-cd astrixa-lang
-git pull
-cd compiler && cargo build --release
-```
-
-## Uninstalling
-
-Remove ASTRIXA from your system:
-
-```bash
-# If installed with script
-sudo rm /usr/local/bin/astrixa
-
-# If installed from source
-rm -rf ~/astrixa-lang
-```
-
-## Next Steps
-
-✅ ASTRIXA is installed!
-
-Now learn the language:
-- [Language Syntax →](language/syntax.md)
-- [Standard Library →](stdlib/web.md)
-- [Examples →](../examples/)
-
----
-
-**Need help?** Join our community on [GitHub Discussions](https://github.com/Podamekalajagadeesh/astrixa-lang/discussions)
